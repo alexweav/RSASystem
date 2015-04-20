@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-19-2015 7:30pm
+//Last update: 4-20-2015 2:39am
 package Interface;
 
 import Primality.FermatPrimalityTester;
@@ -23,7 +23,8 @@ public class TestInterface {
         FactorizationPrimalityTester reference = new FactorizationPrimalityTester();
         MillerRabinPrimalityTester mrtester = new MillerRabinPrimalityTester();
         
-        System.out.println(mrtester.isPrime(11, 1));
+        System.out.println(mrtester.isPrime(5, 1));
+        System.out.println(mrtester.isPrime(new BigInteger("5"), 1));
         
         //Set the numIterations to a positive integer
         //This loops through the natural numbers, increasingly
@@ -32,9 +33,9 @@ public class TestInterface {
         //Prints that number
         //User can change the number of iterations in order to see the impact on accuracy
         int i = 2;
-        int numIterations = 1;
+        int numIterations = 2;
         while(true) {
-            boolean passesTest = sstester.isPrime((new BigInteger(Integer.toString(i))), numIterations);
+            boolean passesTest = mrtester.isPrime((new BigInteger(Integer.toString(i))), numIterations);
             boolean prime = reference.isPrime(i);
             if(passesTest != prime) {
                 System.out.println("The first number to fail " + numIterations + " iterations is " + i + "\n");

@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-19-2015 6:51pm
+//Last update: 4-20-2015 2:39am
 package Primality;
 
 import java.math.BigInteger;
@@ -55,7 +55,7 @@ public class FermatPrimalityTester {
         if(iterations < 1) {
             throw new IllegalArgumentException("Number of iterations must be greater than 0.");
         }
-        if(prime.compareTo(TWO) < 1) {  //anything less than 2 is not prime
+        if(prime.compareTo(TWO) == -1) {  //anything less than 2 is not prime
             return false;
         }
         if(prime.compareTo(TWO) == 0) {     //2 is prime
