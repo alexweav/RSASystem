@@ -33,6 +33,19 @@ public class MillerRabinPrimalityTester {
         return true;
     }
     
+    public boolean isStrongProbablePrime(int prime, int base) {
+        if(prime < 2) {
+            return false;
+        }
+        if(prime == 2) {
+            return true;
+        }
+        if(prime % 2 == 0) {
+            return false;
+        }
+        return test(prime, base);
+    }
+    
     private boolean test(int prime, int base) {
         MRParameter params = new MRParameter(prime);
         return equation1(params.getN(), base, params.getD()) || equation2(params.getN(), base, params.getD(), params.getS());
@@ -69,6 +82,19 @@ public class MillerRabinPrimalityTester {
             }
         }
         return true;
+    }
+    
+    public boolean isStrongProbablePrime(BigInteger prime, BigInteger base) {
+        if(prime.compareTo(TWO) == -1) {
+            return false;
+        }
+        if(prime.compareTo(TWO) == 0) {
+            return true;
+        }
+        if(prime.mod(TWO).compareTo(ZERO) == 0) {
+            return false;
+        }
+        return test(prime, base);
     }
     
     private boolean test(BigInteger prime, BigInteger base) {
