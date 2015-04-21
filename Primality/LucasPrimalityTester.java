@@ -1,11 +1,18 @@
 //Alexander Weaver
-//Last update: 4-21-2015 1:16am
+//Last update: 4-21-2015 6:11pm
 package Primality;
 
 import Util.JacobiSymbolTester;
 
+import java.math.BigInteger;
+
 //Manager object which determines primality probabilistically, using the Lucas Primality Test
 public class LucasPrimalityTester {
+    
+    private static final BigInteger ZERO = new BigInteger("0");
+    private static final BigInteger ONE = new BigInteger("1");
+    private static final BigInteger TWO = new BigInteger("2");
+    private static final BigInteger FOUR = new BigInteger("4");
     
     //Takes an int to be tested, and two int parameters
     //Returns true if the int passes the Lucas test given the parameters, false otherwise
@@ -19,9 +26,13 @@ public class LucasPrimalityTester {
         if(prime%2 == 0) {
             return false;
         }
-        int d = (p*p) - (4*q);
+        int d = getD(p, q);
         int delt = delta(prime, d);
         return lucasNumberU(delt, p, q)%prime == 0;
+    }
+    
+    private int getD(int p, int q) {
+        return (p*p) - (4*q);
     }
     
     //Define delta(n, D) = n - jacobi(D|n)
@@ -33,7 +44,7 @@ public class LucasPrimalityTester {
     
     //Takes a int index n>=0 and two int parameters, p and q
     //Returns the nth number of the Lucas series of the first kind, U(P,Q)
-    private int lucasNumberU(int n, int p, int q) {
+    public int lucasNumberU(int n, int p, int q) {
         if(n < 0) {
             throw new IllegalArgumentException("n must be greater than or equal to 0.");
         } else if(n <= 1) {
@@ -43,4 +54,37 @@ public class LucasPrimalityTester {
         }
     }
     
+    public boolean test(BigInteger prime, BigInteger p, BigInteger q) {
+        if(prime.compareTo(TWO) == -1) {  //anything less than 2 is not prime
+            return false;
+        }
+        if(prime.compareTo(TWO) == 0) {     //2 is prime
+            return true;
+        }
+        if(prime.mod(TWO).compareTo(ZERO) == 0) { //Anything that is divisible by 2 that is not 2 is not prime
+            return false;
+        }
+        BigInteger d = getD(p, q);
+        BigInteger delt = delta(prime, d);
+        return lucasNumberU(delt, p, q).mod(prime).compareTo(ZERO) == 0;
+    }
+    
+    private BigInteger getD(BigInteger p, BigInteger q) {
+        return (p.multiply(p)).subtract(q.multiply(FOUR));
+    }
+    
+    private BigInteger delta(BigInteger n, BigInteger d) {
+        JacobiSymbolTester jTester = new JacobiSymbolTester();
+        return n.subtract(new BigInteger(Integer.toString(jTester.getSymbol(d, n))));
+    }
+    
+    public BigInteger lucasNumberU(BigInteger n, BigInteger p, BigInteger q) {
+        if(n.compareTo(ZERO) == -1) {
+            throw new IllegalArgumentException("n must be greater than or equal to 0.");
+        } else if (n.compareTo(ONE) < 1) {
+            return n;
+        } else {
+            return (p.multiply(lucasNumberU(n.subtract(ONE), p, q))).subtract(q.multiply(lucasNumberU(n.subtract(TWO), p, q)));
+        }
+    }
 }

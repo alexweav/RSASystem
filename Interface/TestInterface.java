@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-21-2015 1:09am
+//Last update: 4-21-2015 6:11pm
 package Interface;
 
 import Primality.FermatPrimalityTester;
@@ -25,7 +25,8 @@ public class TestInterface {
         MillerRabinPrimalityTester mrtester = new MillerRabinPrimalityTester();
         LucasPrimalityTester ltester = new LucasPrimalityTester();
         
-        System.out.println(ltester.test(11, 20, -1));
+        System.out.println(ltester.test(new BigInteger("15"), new BigInteger("20"), new BigInteger("-1")));
+        System.out.println(ltester.test(15, 20, -1));
         
         //Set the numIterations to a positive integer
         //This loops through the natural numbers, increasingly
