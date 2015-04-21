@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-20-2015 2:39am
+//Last update: 4-20-2015 9:55pm
 package Primality;
 
 import java.math.BigInteger;
