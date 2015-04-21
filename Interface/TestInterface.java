@@ -1,11 +1,12 @@
 //Alexander Weaver
-//Last update: 4-20-2015 9:55pm
+//Last update: 4-21-2015 1:09am
 package Interface;
 
 import Primality.FermatPrimalityTester;
 import Primality.FactorizationPrimalityTester;
 import Primality.MillerRabinPrimalityTester;
 import Primality.SolovayStrassenPrimalityTester;
+import Primality.LucasPrimalityTester;
 
 import java.math.BigInteger;
 
@@ -14,7 +15,7 @@ import java.math.BigInteger;
 //Will not be used in final program, purely for build testing
 public class TestInterface {
     
-    
+
 
     public static void main(String[] args) {
         //Creates the testers
@@ -22,6 +23,9 @@ public class TestInterface {
         SolovayStrassenPrimalityTester sstester = new SolovayStrassenPrimalityTester();
         FactorizationPrimalityTester reference = new FactorizationPrimalityTester();
         MillerRabinPrimalityTester mrtester = new MillerRabinPrimalityTester();
+        LucasPrimalityTester ltester = new LucasPrimalityTester();
+        
+        System.out.println(ltester.test(11, 20, -1));
         
         //Set the numIterations to a positive integer
         //This loops through the natural numbers, increasingly
