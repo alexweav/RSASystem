@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-21-2015 1:09am
+//Last update: 4-21-2015 1:16am
 package Primality;
 
 import Util.JacobiSymbolTester;
@@ -7,6 +7,8 @@ import Util.JacobiSymbolTester;
 //Manager object which determines primality probabilistically, using the Lucas Primality Test
 public class LucasPrimalityTester {
     
+    //Takes an int to be tested, and two int parameters
+    //Returns true if the int passes the Lucas test given the parameters, false otherwise
     public boolean test(int prime, int p, int q) {
         if(prime < 2) {
             return false;
@@ -29,6 +31,8 @@ public class LucasPrimalityTester {
         return n - jTester.getSymbol(d, n);
     }
     
+    //Takes a int index n>=0 and two int parameters, p and q
+    //Returns the nth number of the Lucas series of the first kind, U(P,Q)
     private int lucasNumberU(int n, int p, int q) {
         if(n < 0) {
             throw new IllegalArgumentException("n must be greater than or equal to 0.");
@@ -39,15 +43,4 @@ public class LucasPrimalityTester {
         }
     }
     
-    private int lucasNumberV(int n, int p, int q) {
-        if(n < 0) {
-            throw new IllegalArgumentException("n must be greater than or equal to 0.");
-        } else if(n == 0) {
-            return 2;
-        } else if(n == 1) {
-            return p;
-        } else {
-            return p*lucasNumberV(n - 1, p, q) - q*lucasNumberV(n - 2, p, q);
-        }
-    }
 }
