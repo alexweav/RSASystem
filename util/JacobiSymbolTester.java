@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-19-2015 4:45pm
+//Last update: 4-22-2015 11:12am
 package Util;
 
 import java.math.BigInteger;
@@ -72,13 +72,19 @@ public class JacobiSymbolTester {
                n.mod(FOUR).compareTo(THREE) == 0) {
                 j = -j;
             }
-            a = a.mod(n);
+            a = bigMod(a, n);
         }
         if(n.compareTo(ONE) == 0) {
             return j;
         } else {
             return 0;
         }
+    }
+    
+    private BigInteger bigMod(BigInteger a, BigInteger n) {
+        BigInteger value = a.divide(n);
+        value = value.multiply(n);
+        return a.subtract(value);
     }
     
 }

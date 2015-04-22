@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-22-2015 1:38am
+//Last update: 4-22-2015 11:12am
 package Interface;
 
 import Primality.FermatPrimalityTester;
@@ -27,7 +27,10 @@ public class TestInterface {
         LucasPrimalityTester ltester = new LucasPrimalityTester();
         BailliePSWPrimalityTester bPSWTester = new BailliePSWPrimalityTester();
         
-        System.out.println(bPSWTester.isPrime(11));
+        ltester.test(new BigInteger("41"), new BigInteger("1"), new BigInteger("3"));
+        System.out.println(ltester.test(new BigInteger("41"), new BigInteger("1"), new BigInteger("3")));
+        
+        System.out.println(bPSWTester.isPrime(new BigInteger("41")));
         
         //Set the numIterations to a positive integer
         //This loops through the natural numbers, increasingly
@@ -38,11 +41,13 @@ public class TestInterface {
         int i = 2;
         int numIterations = 2;
         while(true) {
-            boolean passesTest = mrtester.isStrongProbablePrime((new BigInteger(Integer.toString(i))), new BigInteger("2"));
+            boolean passesTest = bPSWTester.isPrime(new BigInteger(Integer.toString(i)));
             boolean prime = reference.isPrime(i);
             if(passesTest != prime) {
                 System.out.println("The first number to fail " + numIterations + " iterations is " + i + "\n");
                 break;
+            } else {
+                System.out.println("The value " + i + " is consistent.\n");
             }
             i++;
         }
