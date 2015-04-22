@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-21-2015 6:11pm
+//Last update: 4-22-2015 1:38am
 package Interface;
 
 import Primality.FermatPrimalityTester;
@@ -7,6 +7,7 @@ import Primality.FactorizationPrimalityTester;
 import Primality.MillerRabinPrimalityTester;
 import Primality.SolovayStrassenPrimalityTester;
 import Primality.LucasPrimalityTester;
+import Primality.BailliePSWPrimalityTester;
 
 import java.math.BigInteger;
 
@@ -24,9 +25,9 @@ public class TestInterface {
         FactorizationPrimalityTester reference = new FactorizationPrimalityTester();
         MillerRabinPrimalityTester mrtester = new MillerRabinPrimalityTester();
         LucasPrimalityTester ltester = new LucasPrimalityTester();
+        BailliePSWPrimalityTester bPSWTester = new BailliePSWPrimalityTester();
         
-        System.out.println(ltester.test(new BigInteger("15"), new BigInteger("20"), new BigInteger("-1")));
-        System.out.println(ltester.test(15, 20, -1));
+        System.out.println(bPSWTester.isPrime(11));
         
         //Set the numIterations to a positive integer
         //This loops through the natural numbers, increasingly
