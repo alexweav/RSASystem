@@ -28,9 +28,9 @@ public class TestInterface {
         BailliePSWPrimalityTester bPSWTester = new BailliePSWPrimalityTester();
         
         ltester.test(new BigInteger("41"), new BigInteger("1"), new BigInteger("3"));
-        System.out.println(ltester.test(new BigInteger("41"), new BigInteger("1"), new BigInteger("3")));
+        //System.out.println(ltester.test(new BigInteger("41"), new BigInteger("1"), new BigInteger("3")));
         
-        System.out.println(bPSWTester.isPrime(new BigInteger("41")));
+        System.out.println(bPSWTester.isPrime(new BigInteger("982451653")));
         
         //Set the numIterations to a positive integer
         //This loops through the natural numbers, increasingly

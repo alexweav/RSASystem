@@ -76,9 +76,6 @@ public class BailliePSWPrimalityTester {
         BigInteger d = getD(prime);
         BigInteger p = ONE;
         BigInteger q = ONE.subtract(d).divide(FOUR);
-        System.out.println(d.toString());
-        System.out.println(p.toString());
-        System.out.println(q.toString());
         LucasPrimalityTester lTester = new LucasPrimalityTester();
         return lTester.test(prime, p, q);
     }

@@ -50,7 +50,17 @@ public class LucasPrimalityTester {
         } else if(n <= 1) {
             return n;
         } else {
-            return p*lucasNumberU(n - 1, p, q) - q*lucasNumberU(n - 2, p, q);
+            int prev1 = 1;
+            int prev2 = 0;
+            int i = 2;
+            int current = p*prev1 - q*prev2;
+            while(i < n) {
+                prev2 = prev1;
+                prev1 = current;
+                current = p*prev1 - q*prev2;
+                i++;
+            }
+            return current;
         }
     }
     
@@ -84,7 +94,18 @@ public class LucasPrimalityTester {
         } else if (n.compareTo(ONE) < 1) {
             return n;
         } else {
-            return (p.multiply(lucasNumberU(n.subtract(ONE), p, q))).subtract(q.multiply(lucasNumberU(n.subtract(TWO), p, q)));
+            BigInteger prev1 = ONE;
+            BigInteger prev2 = ZERO;
+            BigInteger i = TWO;
+            BigInteger current = (p.multiply(prev1)).subtract(q.multiply(prev2));
+            while(i.compareTo(n) == -1) {
+                prev2 = prev1;
+                prev1 = current;
+                current = (p.multiply(prev1)).subtract(q.multiply(prev2));
+                i = i.add(ONE);
+                System.out.println("Stuck on lucas");
+            }
+            return current;
         }
     }
 }
