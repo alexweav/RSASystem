@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-21-2015 6:11pm
+//Last update: 4-24-2015 10:40am
 package Primality;
 
 import Util.JacobiSymbolTester;
@@ -88,7 +88,7 @@ public class LucasPrimalityTester {
         return n.subtract(new BigInteger(Integer.toString(jTester.getSymbol(d, n))));
     }
     
-    public BigInteger lucasNumberU(BigInteger n, BigInteger p, BigInteger q) {
+    /*public BigInteger lucasNumberU(BigInteger n, BigInteger p, BigInteger q) {
         if(n.compareTo(ZERO) == -1) {
             throw new IllegalArgumentException("n must be greater than or equal to 0.");
         } else if (n.compareTo(ONE) < 1) {
@@ -103,9 +103,34 @@ public class LucasPrimalityTester {
                 prev1 = current;
                 current = (p.multiply(prev1)).subtract(q.multiply(prev2));
                 i = i.add(ONE);
-                System.out.println("Stuck on lucas");
             }
             return current;
         }
+    }*/
+    
+    //Algorithm from Aleksey Koval, source http://www.scirp.org/journal/PaperInformation.aspx?PaperID=3368#.VTpfmZPk_qp
+    //Takes an index n and parameters p and q, all in BigInteger form
+    //Returns the nth member of the Lucas Sequence U(P, Q)
+    private BigInteger lucasNumberU(BigInteger n, BigInteger p, BigInteger q) {
+        String binaryExpansion = n.toString(2);
+        int len = binaryExpansion.length();
+        BigInteger vl = new BigInteger("2");
+        BigInteger vh = p;
+        BigInteger ql = new BigInteger("1");
+        BigInteger qh = new BigInteger("1");
+        for(int j = (len - 1); j >= 0; j--) {
+            ql = ql.multiply(qh);
+            if(binaryExpansion.charAt(j) == 1) {
+                qh = ql.multiply(q);
+                vl = (vh.multiply(vl)).subtract(p.multiply(ql));
+                vh = (vh.multiply(vh)).subtract(qh.multiply(TWO));
+            } else {
+                qh = ql;
+                vh = (vh.multiply(vl)).subtract(p.multiply(ql));
+                vl = (vl.multiply(vl)).subtract(qh.multiply(TWO));
+            }
+        }
+        BigInteger uk = ((vh.multiply(TWO)).subtract(p.multiply(vl))).divide((p.multiply(p)).subtract(q.multiply(FOUR)));
+        return uk;
     }
 }

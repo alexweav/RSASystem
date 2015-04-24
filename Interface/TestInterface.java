@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-22-2015 11:12am
+//Last update: 4-24-2015 10:40am
 package Interface;
 
 import Primality.FermatPrimalityTester;
@@ -27,10 +27,20 @@ public class TestInterface {
         LucasPrimalityTester ltester = new LucasPrimalityTester();
         BailliePSWPrimalityTester bPSWTester = new BailliePSWPrimalityTester();
         
-        ltester.test(new BigInteger("41"), new BigInteger("1"), new BigInteger("3"));
-        //System.out.println(ltester.test(new BigInteger("41"), new BigInteger("1"), new BigInteger("3")));
         
-        System.out.println(bPSWTester.isPrime(new BigInteger("982451653")));
+        //System.out.println(ltester.test(new BigInteger("41"), new BigInteger("1"), new BigInteger("3")));
+        System.out.println(bPSWTester.isPrime(new BigInteger("982451653"))); //The fifty millionth prime
+        
+        /*int i = 2;
+        while(true) {
+            boolean passesTest = bPSWTester.isPrime(new BigInteger(Integer.toString(i)));
+            if(passesTest) {
+                System.out.println(i + " is prime by the bPSW test.");
+            } else {
+                System.out.println(i + " is composite.");
+            }
+            i++;
+        }*/
         
         //Set the numIterations to a positive integer
         //This loops through the natural numbers, increasingly
@@ -38,7 +48,7 @@ public class TestInterface {
         //Stops when there is a difference (i.e. the SS primality test fails)
         //Prints that number
         //User can change the number of iterations in order to see the impact on accuracy
-        int i = 2;
+        /*int i = 2;
         int numIterations = 2;
         while(true) {
             boolean passesTest = bPSWTester.isPrime(new BigInteger(Integer.toString(i)));
@@ -50,7 +60,7 @@ public class TestInterface {
                 System.out.println("The value " + i + " is consistent.\n");
             }
             i++;
-        }
+        }*/
     }
     
 }
