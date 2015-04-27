@@ -1,6 +1,6 @@
 //Alexander Weaver
-//Last update: 4-27-2015 1:35pm
-package util;
+//Last update: 4-27-2015 2:33pm
+package Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +15,8 @@ public class Stack<T> {
     
     public T pop() {
         int length = data.size();
-        T poppedData = data.get(length);
-        data.remove(length);
+        T poppedData = data.get(length - 1);
+        data.remove(length - 1);
         return poppedData;
     }
 }

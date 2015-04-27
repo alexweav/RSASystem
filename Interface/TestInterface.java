@@ -9,6 +9,7 @@ import Primality.SolovayStrassenPrimalityTester;
 import Primality.LucasPrimalityTester;
 import Primality.BailliePSWPrimalityTester;
 import Util.EncodingManager;
+import Euclidean.*;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -29,10 +30,13 @@ public class TestInterface {
         LucasPrimalityTester ltester = new LucasPrimalityTester();
         BailliePSWPrimalityTester bPSWTester = new BailliePSWPrimalityTester();
         EncodingManager eManager = new EncodingManager();
+        ExtendedEuclidean euclidean = new ExtendedEuclidean();
         
-        byte[] vals = {97, 98};
-        System.out.println(eManager.valuesToTextASCII(vals));
-        System.out.println(Arrays.toString(eManager.textToValuesASCII("abcd")));
+        System.out.println(euclidean.getGCD(390620, 685536));
+        
+        //byte[] vals = {97, 98};
+        //System.out.println(eManager.valuesToTextASCII(vals));
+        //System.out.println(Arrays.toString(eManager.textToValuesASCII("abcd")));
         
         /*int i = 2;
         while(true) {
