@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-24-2015 10:40am
+//Last update: 4-27-2015 11:17am
 package Interface;
 
 import Primality.FermatPrimalityTester;
@@ -8,8 +8,10 @@ import Primality.MillerRabinPrimalityTester;
 import Primality.SolovayStrassenPrimalityTester;
 import Primality.LucasPrimalityTester;
 import Primality.BailliePSWPrimalityTester;
+import Util.EncodingManager;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 
 //Main class interface
 //Used for functionally testing pieces as they are made
@@ -26,10 +28,11 @@ public class TestInterface {
         MillerRabinPrimalityTester mrtester = new MillerRabinPrimalityTester();
         LucasPrimalityTester ltester = new LucasPrimalityTester();
         BailliePSWPrimalityTester bPSWTester = new BailliePSWPrimalityTester();
+        EncodingManager eManager = new EncodingManager();
         
-        
-        //System.out.println(ltester.test(new BigInteger("41"), new BigInteger("1"), new BigInteger("3")));
-        System.out.println(bPSWTester.isPrime(new BigInteger("982451653"))); //The fifty millionth prime
+        byte[] vals = {97, 98};
+        System.out.println(eManager.valuesToTextASCII(vals));
+        System.out.println(Arrays.toString(eManager.textToValuesASCII("abcd")));
         
         /*int i = 2;
         while(true) {
@@ -48,7 +51,7 @@ public class TestInterface {
         //Stops when there is a difference (i.e. the SS primality test fails)
         //Prints that number
         //User can change the number of iterations in order to see the impact on accuracy
-        int i = 2;
+        /*int i = 2;
         int numIterations = 5;
         while(true) {
             boolean passesTest = mrtester.isPrime(new BigInteger(Integer.toString(i)), numIterations);
@@ -60,7 +63,7 @@ public class TestInterface {
                 System.out.println("The value " + i + " is consistent.\n");
             }
             i++;
-        }
+        }*/
     }
     
 }
