@@ -32,7 +32,7 @@ public class TestInterface {
         EncodingManager eManager = new EncodingManager();
         ExtendedEuclidean euclidean = new ExtendedEuclidean();
         
-        System.out.println(euclidean.getGCD(390620, 685536));
+        System.out.println(euclidean.getGCD(new BigInteger("390620"), new BigInteger("685536")).toString());
         
         //byte[] vals = {97, 98};
         //System.out.println(eManager.valuesToTextASCII(vals));
