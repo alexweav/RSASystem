@@ -48,10 +48,10 @@ public class TestInterface {
         //Stops when there is a difference (i.e. the SS primality test fails)
         //Prints that number
         //User can change the number of iterations in order to see the impact on accuracy
-        /*int i = 2;
-        int numIterations = 2;
+        int i = 2;
+        int numIterations = 5;
         while(true) {
-            boolean passesTest = bPSWTester.isPrime(new BigInteger(Integer.toString(i)));
+            boolean passesTest = mrtester.isPrime(new BigInteger(Integer.toString(i)), numIterations);
             boolean prime = reference.isPrime(i);
             if(passesTest != prime) {
                 System.out.println("The first number to fail " + numIterations + " iterations is " + i + "\n");
@@ -60,7 +60,7 @@ public class TestInterface {
                 System.out.println("The value " + i + " is consistent.\n");
             }
             i++;
-        }*/
+        }
     }
     
 }
