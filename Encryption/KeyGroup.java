@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-27-2015 11:23am
+//Last update: 4-27-2015 6:05pm
 package Encryption;
 
 import java.math.BigInteger;
@@ -15,6 +15,7 @@ public class KeyGroup {
     private BigInteger totient;
     private BigInteger publicKey;
     private BigInteger keyExponent;
+    private BigInteger privateKey;
     
     //gets
     public BigInteger getFactor1() {
@@ -37,6 +38,10 @@ public class KeyGroup {
         return keyExponent;
     }
     
+    public BigInteger getPrivateKey() {
+        return privateKey;
+    }
+    
     public KeyGroup(int bitLength) {
         int iterations = 10; //This will eventually be calculated. placeholder value.
         PrimeGenerator generator = new PrimeGenerator();
@@ -48,5 +53,7 @@ public class KeyGroup {
         publicKey = factor1.multiply(factor2);
         totient = publicKey.subtract(factor1.add(factor2).subtract(ONE));
         keyExponent = new BigInteger("65537");  //Temporary value, commonly chosen for key exponent
+        ExtendedEuclidean euclidean = new ExtendedEuclidean();
+        privateKey = euclidean.getModularInverse(keyExponent, totient);
     }
 }

@@ -1,7 +1,8 @@
 //Alexander Weaver
-//Last update: 4-27-2015 11:17am
+//Last update: 4-27-2015 6:01pm
 package Interface;
 
+import Encryption.ExtendedEuclidean;
 import Primality.FermatPrimalityTester;
 import Primality.FactorizationPrimalityTester;
 import Primality.MillerRabinPrimalityTester;
@@ -9,7 +10,6 @@ import Primality.SolovayStrassenPrimalityTester;
 import Primality.LucasPrimalityTester;
 import Primality.BailliePSWPrimalityTester;
 import Util.EncodingManager;
-import Euclidean.*;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -32,7 +32,7 @@ public class TestInterface {
         EncodingManager eManager = new EncodingManager();
         ExtendedEuclidean euclidean = new ExtendedEuclidean();
         
-        System.out.println(euclidean.getGCD(new BigInteger("390620"), new BigInteger("685536")).toString());
+        System.out.println(euclidean.getModularInverse(new BigInteger("17"), new BigInteger("3120")).toString());
         
         //byte[] vals = {97, 98};
         //System.out.println(eManager.valuesToTextASCII(vals));
