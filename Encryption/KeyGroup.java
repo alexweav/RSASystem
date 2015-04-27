@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-27-2015 10:50am
+//Last update: 4-27-2015 11:23am
 package Encryption;
 
 import java.math.BigInteger;
@@ -12,8 +12,9 @@ public class KeyGroup {
     
     private BigInteger factor1;
     private BigInteger factor2;
-    private BigInteger privateKey;
+    private BigInteger totient;
     private BigInteger publicKey;
+    private BigInteger keyExponent;
     
     //gets
     public BigInteger getFactor1() {
@@ -24,12 +25,16 @@ public class KeyGroup {
         return factor2;
     }
     
-    public BigInteger getPrivateKey() {
-        return privateKey;
+    public BigInteger getTotient() {
+        return totient;
     }
     
     public BigInteger getPublicKey() {
         return publicKey;
+    }
+    
+    public BigInteger getKeyExponent() {
+        return keyExponent;
     }
     
     public KeyGroup(int bitLength) {
@@ -41,6 +46,7 @@ public class KeyGroup {
             factor2 = generator.generatePrime(bitLength, iterations);
         }
         publicKey = factor1.multiply(factor2);
-        privateKey = publicKey.subtract(factor1.add(factor2).subtract(ONE));
+        totient = publicKey.subtract(factor1.add(factor2).subtract(ONE));
+        keyExponent = new BigInteger("65537");  //Temporary value, commonly chosen for key exponent
     }
 }
