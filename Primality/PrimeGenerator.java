@@ -1,18 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
+//Alexander Weaver
+//Last update: 4-27-2015 10:33am
 package Primality;
 
 import java.math.BigInteger;
 import java.util.Random;
 
-/**
- *
- * @author Alexander
- */
 public class PrimeGenerator {
     
     public BigInteger generatePrime(int bitLength, int iterations) {
@@ -24,7 +16,9 @@ public class PrimeGenerator {
         BigInteger candidate;
         while(true) {
             candidate = new BigInteger(bitLength, rand);
-            mRTester.isPrime(candidate, iterations);
+            if(mRTester.isPrime(candidate, iterations)) {
+                return candidate;
+            }
         }
     }
 }
