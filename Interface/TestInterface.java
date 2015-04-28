@@ -10,6 +10,7 @@ import Primality.SolovayStrassenPrimalityTester;
 import Primality.LucasPrimalityTester;
 import Primality.BailliePSWPrimalityTester;
 import Util.EncodingManager;
+import Encryption.*;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -21,7 +22,7 @@ public class TestInterface {
     
 
 
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
         //Creates the testers
         FermatPrimalityTester ftester = new FermatPrimalityTester();
         SolovayStrassenPrimalityTester sstester = new SolovayStrassenPrimalityTester();
@@ -31,6 +32,7 @@ public class TestInterface {
         BailliePSWPrimalityTester bPSWTester = new BailliePSWPrimalityTester();
         EncodingManager eManager = new EncodingManager();
         ExtendedEuclidean euclidean = new ExtendedEuclidean();
+        Encryptor encryptor = new Encryptor();
         
         System.out.println(euclidean.getModularInverse(new BigInteger("17"), new BigInteger("3120")).toString());
         
