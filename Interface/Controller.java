@@ -1,10 +1,11 @@
 //Alexander Weaver
-//Last update: 4-27-2015 10:20pm
+//Last update: 4-28-2015 3:59pm
 package Interface;
 
 import Encryption.*;
 
 import java.math.BigInteger;
+import Util.EncodingManager;
 
 public class Controller {
     
@@ -21,12 +22,19 @@ public class Controller {
         System.out.println("Totient is " + keys.getTotient());
         System.out.println("Private Key is " + keys.getPrivateKey());
         System.out.println("Exponent is " + keys.getKeyExponent());
-        BigInteger message = new BigInteger("11223344556677889900");
-        System.out.println("Message value is " + message.toString());
+        String message = "swag";
+        System.out.println("The message is " + message);
+        EncodingManager pad = new EncodingManager();
+        String hex = pad.textToHexASCII(message);
+        BigInteger padded = pad.hexToBigInteger(hex);
+        System.out.println("Message value is " + padded.toString());
         Encryptor encryptor = new Encryptor();
-        BigInteger encryptedMessage = encryptor.encrypt(message, keys.getKeyExponent(), keys.getPublicKey());
+        BigInteger encryptedMessage = encryptor.encrypt(padded, keys.getKeyExponent(), keys.getPublicKey());
         System.out.println("Encrypted message is " + encryptedMessage.toString());
         BigInteger decryptedMessage = encryptor.decrypt(encryptedMessage, keys.getPrivateKey(), keys.getPublicKey());
         System.out.println("After decryption, the message is " + decryptedMessage.toString());
+        String hexResult = pad.bigIntegerToHex(decryptedMessage);
+        String messageResult = pad.hexToTextASCII(hexResult);
+        System.out.println("The received message is " + messageResult);
     }
 }
