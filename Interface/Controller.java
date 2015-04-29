@@ -14,7 +14,7 @@ public class Controller {
     //512 bit keys take one second
     //1024 bit keys take 30 seconds
     //2048 bit keys take longer
-    public static void main(String[] args) { 
+    public void run() { 
         KeyGroup keys = new KeyGroup(512);
         System.out.println("Factor 1 is " + keys.getFactor1());
         System.out.println("Factor 2 is " + keys.getFactor2());
@@ -22,7 +22,7 @@ public class Controller {
         System.out.println("Totient is " + keys.getTotient());
         System.out.println("Private Key is " + keys.getPrivateKey());
         System.out.println("Exponent is " + keys.getKeyExponent());
-        String message = "swag";
+        String message = "you wot m8";
         System.out.println("The message is " + message);
         EncodingManager pad = new EncodingManager();
         String hex = pad.textToHexASCII(message);
