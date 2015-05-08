@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 5-8-2015 4:59pm
+//Last update: 5-8-2015 5:14pm
 package Interface;
 
 
@@ -80,16 +80,6 @@ public class TUI {
         Encryptor encryptor = new Encryptor();
         BigInteger encryptedMessage = encryptor.encrypt(padded, exponent, publicKey);
         System.out.println("Encrypted message value is " + encryptedMessage.toString());
-        String eHex = pad.bigIntegerToHex(encryptedMessage);
-        String encryptedText = pad.hexToTextASCII(eHex);
-        System.out.println("Encrypted text is " + encryptedText);
-        eHex = pad.textToHexASCII(encryptedText);
-        System.out.println("Depadded message value is " + pad.hexToBigInteger(eHex).toString());
-        
-        
-        System.out.println("\nEnter any value to progress.");
-        in.next();
-        return;
     }
     
     private void decrypt() {
@@ -98,19 +88,14 @@ public class TUI {
         BigInteger cipherText = getCipherText();
         
         EncodingManager pad = new EncodingManager();
-        //String hex = pad.textToHexASCII(cipherText);
-        //BigInteger cipher = pad.hexToBigInteger(hex);
         System.out.println("Cipher text value is " + cipherText.toString());
         Encryptor encryptor = new Encryptor();
         BigInteger decryptedMessage = encryptor.decrypt(cipherText, privateKey, publicKey);
         System.out.println("Decrypted message value is " + decryptedMessage.toString());
         String dHex = pad.bigIntegerToHex(decryptedMessage);
         String decryptedText = pad.hexToTextASCII(dHex);
-        System.out.println("Decrypted text is " + decryptedText);
-        System.out.println("\nEnter any value to progress.");
-        Scanner in = new Scanner(System.in);
-        in.next();
-        return;
+        System.out.println("Decrypted text:");
+        System.out.println(decryptedText);
     }
     
     private KeyGroup generateKeySet() {
@@ -127,8 +112,6 @@ public class TUI {
         System.out.println("Private Key is " + keys.getPrivateKey());
         System.out.println("Exponent is " + keys.getKeyExponent());
         System.out.println("\nSave these values for your records.");
-        System.out.println("Enter any value to progress.");
-        in.next();
         return keys;
     }
     
@@ -172,7 +155,7 @@ public class TUI {
     }
     
     private BigInteger getCipherText() {
-        System.out.println("Please input the cipher text to be decrypted.");
+        System.out.println("Please input the cipher value to be decrypted.");
         Scanner in = new Scanner(System.in);
         return in.nextBigInteger();
     }

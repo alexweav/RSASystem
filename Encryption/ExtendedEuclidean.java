@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-27-2015 6:01pm
+//Last update: 5-8-2015 5:19pm
 package Encryption;
 
 import java.math.BigInteger;
@@ -11,6 +11,9 @@ public class ExtendedEuclidean {
     private static final BigInteger ZERO = new BigInteger("0");
     private static final BigInteger ONE = new BigInteger("1");
 
+    //gets the modular multiplicative inverse of *value* mod *modulus*
+    //takes the value and modulus in int format
+    //returns the multiplicative inverse in int format
     public int getModularInverse(int value, int modulus) {
         int[] values = getExtendedGCD(value, modulus);
         if(values[0] != 1) {
@@ -24,6 +27,8 @@ public class ExtendedEuclidean {
         }
     }
     
+    //helper procedure for getModularInverse(value, modulus)
+    //compatible with int values
     private int[] getExtendedGCD(int value, int modulus) {
         int x = 0;
         int y = 1;
@@ -46,6 +51,9 @@ public class ExtendedEuclidean {
         return result;
     }
     
+    //gets the modular multiplicative inverse of *value* mod *modulus*
+    //takes the value and modulus in BigInteger format
+    //returns the multiplicative inverse in BigInteger format
     public BigInteger getModularInverse(BigInteger value, BigInteger modulus) {
         BigInteger[] values = getExtendedGCD(value, modulus);
         if(values[0].compareTo(ONE) != 0) {
@@ -59,6 +67,8 @@ public class ExtendedEuclidean {
         }
     }
     
+    //helper procedure for getModularInverse(value, modulus)
+    //compatible with BigInteger values
     private BigInteger[] getExtendedGCD(BigInteger value, BigInteger modulus) {
         BigInteger x = new BigInteger("0");
         BigInteger y = new BigInteger("1");

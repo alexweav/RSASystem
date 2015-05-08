@@ -10,10 +10,16 @@ public class Encryptor {
     private static final BigInteger ONE = new BigInteger("1");
     private static final BigInteger TWO = new BigInteger("2");
     
+    //Encrypts a message with a given exponent and public key
+    //Takes the message, exponent, and key
+    //Outputs the cipher message
     public BigInteger encrypt(BigInteger message, int exponent, BigInteger publicKey) {
         return modularPow(message, exponent, publicKey);
     }
     
+    //Decrypts a cipher message using its corresponding public and private keys
+    //Takes the cipher, the private key, and the public key
+    //Outputs the original message, provided correct values
     public BigInteger decrypt(BigInteger cipher, BigInteger privateKey, BigInteger publicKey) {
         return modularPow(cipher, privateKey, publicKey);
     }
@@ -33,6 +39,8 @@ public class Encryptor {
         return result;
     }
     
+    //version of modularPow(base, exponent, modulus) above
+    //compatible with BigInteger base and modulus, and int exponent
     public BigInteger modularPow(BigInteger base, int exponent, BigInteger modulus) {
         BigInteger result = new BigInteger("1");
         base = base.mod(modulus);
@@ -46,6 +54,8 @@ public class Encryptor {
         return result;
     }
     
+    //version of modularPow(base, exponent, modulus) above
+    //compatible with all arguments being in BigInteger format
     public BigInteger modularPow(BigInteger base, BigInteger exponent, BigInteger modulus) {
         BigInteger result = new BigInteger("1");
         base = base.mod(modulus);

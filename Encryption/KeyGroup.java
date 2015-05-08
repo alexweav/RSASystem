@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-27-2015 10:15pm
+//Last update: 5-8-2015 5:20pm
 package Encryption;
 
 import java.math.BigInteger;
@@ -42,6 +42,8 @@ public class KeyGroup {
         return privateKey;
     }
     
+    //generates a new key set (randomly) given a specified bit length
+    //the public key will be bitLength bits long
     public KeyGroup(int bitLength) {
         int iterations = 100; //This will eventually be calculated. placeholder value.
         PrimeGenerator generator = new PrimeGenerator();

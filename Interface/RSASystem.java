@@ -1,9 +1,11 @@
 //Alexander Weaver
-//Last update: 4-29-2015 1:15am
+//Last update: 5-21-2015 5:21pm
 package Interface;
 
+//main class
 public class RSASystem {
     
+    //main method for program. manages arguments.
     public static void main(String[] argv) {
         int numArgs = argv.length;
         if(numArgs > 0 && "controller".equals(argv[0])) {

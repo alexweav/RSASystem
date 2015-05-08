@@ -1,25 +1,20 @@
 //Alexander Weaver
-//Last update: 4-28-2015 3:59pm
+//Last update: 5-8-2015 5:14pm
 package Util;
 
 import java.math.BigInteger;
 
 public class EncodingManager {
     
-    public byte[] textToValuesASCII(String text) {
-        int length = text.length();
-        byte[] values = new byte[length];
-        for(int i = 0; i < length; i++) {
-            values[i] = (byte)text.charAt(i);
-        }
-        return values;
-    }
-    
     public String textToHexASCII(String text) {
         char[] chars = text.toCharArray();
         StringBuilder hex = new StringBuilder();
         for (int i = 0; i < chars.length; i++) {
-            hex.append(Integer.toHexString((int) chars[i]));
+            String hexChar = Integer.toHexString((int)chars[i]);
+            if(hexChar.length() == 1) {
+                hexChar = '0' + hexChar;
+            }
+            hex.append(hexChar);
         }
         return hex.toString();
     }
@@ -42,17 +37,6 @@ public class EncodingManager {
         }
         return output.toString();
 }
-    
-    public String valuesToTextASCII(byte[] values) {
-        int length = values.length;
-        StringBuilder sb = new StringBuilder();
-        char current;
-        for(int i = 0; i < length; i++) {
-            current = (char)values[i];
-            sb.append(current);
-        }
-        return sb.toString();
-    }
     
     public String valuesToTextASCII(short[] values) {
         int length = values.length;
