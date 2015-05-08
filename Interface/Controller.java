@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 4-28-2015 3:59pm
+//Last update: 5-8-2015 6:24pm
 package Interface;
 
 import Encryption.*;
@@ -16,10 +16,7 @@ public class Controller {
     //2048 bit keys take longer
     public void run() { 
         KeyGroup keys = new KeyGroup(512);
-        System.out.println("Factor 1 is " + keys.getFactor1());
-        System.out.println("Factor 2 is " + keys.getFactor2());
         System.out.println("Public Key is " + keys.getPublicKey());
-        System.out.println("Totient is " + keys.getTotient());
         System.out.println("Private Key is " + keys.getPrivateKey());
         System.out.println("Exponent is " + keys.getKeyExponent());
         String message = "you wot m8";

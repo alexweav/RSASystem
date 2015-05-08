@@ -1,12 +1,23 @@
 //Alexander Weaver
-//Last update: 5-8-2015 5:14pm
+//Last update: 5-8-2015 6:24pm
 package Interface;
 
 
 import Encryption.*;
 import Util.EncodingManager;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TUI {
     
@@ -54,9 +65,10 @@ public class TUI {
         System.out.println("Which keyset would you like to use?");
         System.out.println("1. Generate a new keyset");
         System.out.println("2. Use an existing keyset");
+        System.out.println("3. Use an existing certificate file");
         Scanner in = new Scanner(System.in);
         int option = in.nextInt();
-        while(option < 1 || option > 2) {
+        while(option < 1 || option > 3) {
             System.out.println("Invalid input. Please choose one of the given options.");
             option = in.nextInt();
         }
@@ -70,6 +82,10 @@ public class TUI {
         } else if (option == 2) {
             publicKey = getPublicKey();
             exponent = getExponent();
+        } else if (option == 3) {
+            keys = getCertificate();
+            publicKey = keys.getPublicKey();
+            exponent = keys.getKeyExponent();
         }
         String message = getMessage();
         System.out.println("The message is " + message);
@@ -111,7 +127,22 @@ public class TUI {
         System.out.println("\nPublic Key is " + keys.getPublicKey());
         System.out.println("Private Key is " + keys.getPrivateKey());
         System.out.println("Exponent is " + keys.getKeyExponent());
-        System.out.println("\nSave these values for your records.");
+        
+        
+        System.out.println("\nWould you like to save this keyset as a certificate on your hard drive?");
+        System.out.println("1. Yes");
+        System.out.println("2. No");
+        int choice = in.nextInt();
+        while(choice < 1 || choice > 2) {
+            System.out.println("Invalid input. Please choose one of the given options.");
+            choice = in.nextInt();
+        }
+        if(choice == 1) {
+            saveCertificate(keys);
+        }
+        if(choice == 2) {
+            System.out.println("Save these values for your records.");
+        }
         return keys;
     }
     
@@ -158,5 +189,75 @@ public class TUI {
         System.out.println("Please input the cipher value to be decrypted.");
         Scanner in = new Scanner(System.in);
         return in.nextBigInteger();
+    }
+    
+    /*
+    CERTIFICATE FILE FORMAT:
+    
+    INT -> BYTE[] -> INT -> BYTE[] -> INT
+    
+    PublicKeyArrayLength -> PublicKey -> PrivateKeyArrayLength -> PrivateKey -> KeyExponent
+    
+    The first int denotes the length of the first byte array.
+    The second int denotes the length of the second byte array.
+    */
+    private void saveCertificate(KeyGroup keys) {
+        System.out.println("Please enter a name for the certificate file.");
+        Scanner in = new Scanner(System.in);
+        String name = in.next();
+        name = name + ".bin";
+        //System.out.println("Please enter a filepath indicating where you want the file to be saved.");
+        //TODO: make a custom filepath work here
+        try {
+            FileWriter fileStream = new FileWriter(name);
+        } catch (IOException ex) {
+            Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            DataOutputStream os = new DataOutputStream(new FileOutputStream(name));
+            byte[] buffer = keys.getPublicKey().toByteArray();
+            int length = buffer.length;
+            os.writeInt(length);
+            System.out.println(length + " written");
+            os.write(buffer);
+            buffer = keys.getPrivateKey().toByteArray();
+            length = buffer.length;
+            os.writeInt(length);
+            os.write(buffer);
+            int intBuffer = keys.getKeyExponent();
+            os.write(intBuffer);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("New file, named " + name + " has been created and the key set has been written to it.");
+    }
+    
+    private KeyGroup getCertificate() {
+        int publicKeyLength;
+        BigInteger publicKey;
+        System.out.println("Enter the name of the existing certificate file (without file extension).");
+        Scanner in = new Scanner(System.in);
+        String name = in.next();
+        name = name + ".bin";
+        try {
+            DataInputStream is;
+            is = new DataInputStream(new FileInputStream(name));
+            
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(baos);
+            
+            publicKeyLength = is.readInt();     //length of first byte array
+            System.out.println("public key length is " + publicKeyLength);
+            
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return null;
     }
 }
