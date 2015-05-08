@@ -1,12 +1,16 @@
 //Alexander Weaver
-//Last update: 4-27-2015 10:39pm
+//Last update: 5-8-2015 4:59pm
 package Interface;
 
-import java.util.Scanner;
 
 import Encryption.*;
+import Util.EncodingManager;
+import java.math.BigInteger;
+import java.util.Scanner;
 
 public class TUI {
+    
+    private static final BigInteger FOUR = new BigInteger("4");
     
     public void init() {
         printHeader();
@@ -35,15 +39,78 @@ public class TUI {
             }
         
             if(option == 1) {
-                System.out.println("Enter a string of text to encrypt.");
+                encrypt();
             } else if (option == 2) {
-            
+                decrypt();
             } else if (option == 3) {
                 generateKeySet();
             } else if (option == 4) {
                 System.exit(0);
             }
         }
+    }
+    
+    private void encrypt() {
+        System.out.println("Which keyset would you like to use?");
+        System.out.println("1. Generate a new keyset");
+        System.out.println("2. Use an existing keyset");
+        Scanner in = new Scanner(System.in);
+        int option = in.nextInt();
+        while(option < 1 || option > 2) {
+            System.out.println("Invalid input. Please choose one of the given options.");
+            option = in.nextInt();
+        }
+        KeyGroup keys;
+        BigInteger publicKey = new BigInteger("0");
+        int exponent = 0;
+        if(option == 1) {
+            keys = generateKeySet();
+            publicKey = keys.getPublicKey();
+            exponent = keys.getKeyExponent();
+        } else if (option == 2) {
+            publicKey = getPublicKey();
+            exponent = getExponent();
+        }
+        String message = getMessage();
+        System.out.println("The message is " + message);
+        EncodingManager pad = new EncodingManager();
+        String hex = pad.textToHexASCII(message);
+        BigInteger padded = pad.hexToBigInteger(hex);
+        System.out.println("Message value is " + padded.toString());
+        Encryptor encryptor = new Encryptor();
+        BigInteger encryptedMessage = encryptor.encrypt(padded, exponent, publicKey);
+        System.out.println("Encrypted message value is " + encryptedMessage.toString());
+        String eHex = pad.bigIntegerToHex(encryptedMessage);
+        String encryptedText = pad.hexToTextASCII(eHex);
+        System.out.println("Encrypted text is " + encryptedText);
+        eHex = pad.textToHexASCII(encryptedText);
+        System.out.println("Depadded message value is " + pad.hexToBigInteger(eHex).toString());
+        
+        
+        System.out.println("\nEnter any value to progress.");
+        in.next();
+        return;
+    }
+    
+    private void decrypt() {
+        BigInteger publicKey = getPublicKey();
+        BigInteger privateKey = getPrivateKey();
+        BigInteger cipherText = getCipherText();
+        
+        EncodingManager pad = new EncodingManager();
+        //String hex = pad.textToHexASCII(cipherText);
+        //BigInteger cipher = pad.hexToBigInteger(hex);
+        System.out.println("Cipher text value is " + cipherText.toString());
+        Encryptor encryptor = new Encryptor();
+        BigInteger decryptedMessage = encryptor.decrypt(cipherText, privateKey, publicKey);
+        System.out.println("Decrypted message value is " + decryptedMessage.toString());
+        String dHex = pad.bigIntegerToHex(decryptedMessage);
+        String decryptedText = pad.hexToTextASCII(dHex);
+        System.out.println("Decrypted text is " + decryptedText);
+        System.out.println("\nEnter any value to progress.");
+        Scanner in = new Scanner(System.in);
+        in.next();
+        return;
     }
     
     private KeyGroup generateKeySet() {
@@ -63,5 +130,50 @@ public class TUI {
         System.out.println("Enter any value to progress.");
         in.next();
         return keys;
+    }
+    
+    private BigInteger getPublicKey() {
+        System.out.println("Please input the public key.");
+        Scanner in = new Scanner(System.in);
+        BigInteger key = in.nextBigInteger();
+        while(key.compareTo(FOUR) == -1) {
+            System.out.println("Invalid input. Public key cannot be less than 4.");
+            key = in.nextBigInteger();
+        }
+        return key;
+    }
+    
+    private BigInteger getPrivateKey() {
+        System.out.println("Please input the private key.");
+        Scanner in = new Scanner(System.in);
+        BigInteger key = in.nextBigInteger();
+        while(key.compareTo(FOUR) == -1) {
+            System.out.println("Invalid input. Private key cannot be less than 4.");
+            key = in.nextBigInteger();
+        }
+        return key;
+    }
+    
+    private int getExponent() {
+        System.out.println("Please input the key exponent.");
+        Scanner in = new Scanner(System.in);
+        int exp = in.nextInt();
+        while(exp < 2) {
+            System.out.println("Invalid input. Exponent cannot be less than 2.");
+            exp = in.nextInt();
+        }
+        return exp;
+    }
+    
+    private String getMessage() {
+        System.out.println("Please input the plaintext to be encrypted.");
+        Scanner in = new Scanner(System.in);
+        return in.nextLine();
+    }
+    
+    private BigInteger getCipherText() {
+        System.out.println("Please input the cipher text to be decrypted.");
+        Scanner in = new Scanner(System.in);
+        return in.nextBigInteger();
     }
 }
