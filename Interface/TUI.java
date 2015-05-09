@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 5-8-2015 6:24pm
+//Last update: 5-8-2015 8:11pm
 package Interface;
 
 
@@ -99,9 +99,29 @@ public class TUI {
     }
     
     private void decrypt() {
-        BigInteger publicKey = getPublicKey();
-        BigInteger privateKey = getPrivateKey();
-        BigInteger cipherText = getCipherText();
+        BigInteger publicKey = null;
+        BigInteger privateKey = null;
+        BigInteger cipherText = null;
+        System.out.println("Which keyset source would you like to use?");
+        System.out.println("1. Manually enter a keyset");
+        System.out.println("2. Use an existing keyset certificate file");
+        //todo: finish choice
+        Scanner in = new Scanner(System.in);
+        int option = in.nextInt();
+        while(option < 1 || option > 2) {
+            System.out.println("Invalid input. Please choose one of the given options.");
+            option = in.nextInt();
+        }
+        if(option == 1) {
+            publicKey = getPublicKey();
+            privateKey = getPrivateKey();
+            cipherText = getCipherText();
+        } else {
+            KeyGroup keys = getCertificate();
+            publicKey = keys.getPublicKey();
+            privateKey = keys.getPrivateKey();
+            cipherText = getCipherText();
+        }
         
         EncodingManager pad = new EncodingManager();
         System.out.println("Cipher text value is " + cipherText.toString());
@@ -218,14 +238,13 @@ public class TUI {
             byte[] buffer = keys.getPublicKey().toByteArray();
             int length = buffer.length;
             os.writeInt(length);
-            System.out.println(length + " written");
             os.write(buffer);
             buffer = keys.getPrivateKey().toByteArray();
             length = buffer.length;
             os.writeInt(length);
             os.write(buffer);
             int intBuffer = keys.getKeyExponent();
-            os.write(intBuffer);
+            os.writeInt(intBuffer);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -236,7 +255,10 @@ public class TUI {
     
     private KeyGroup getCertificate() {
         int publicKeyLength;
-        BigInteger publicKey;
+        int privateKeyLength;
+        int keyExponent = 0;
+        BigInteger publicKey = null;
+        BigInteger privateKey = null;
         System.out.println("Enter the name of the existing certificate file (without file extension).");
         Scanner in = new Scanner(System.in);
         String name = in.next();
@@ -245,12 +267,19 @@ public class TUI {
             DataInputStream is;
             is = new DataInputStream(new FileInputStream(name));
             
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            DataOutputStream dos = new DataOutputStream(baos);
-            
             publicKeyLength = is.readInt();     //length of first byte array
-            System.out.println("public key length is " + publicKeyLength);
-            
+            byte[] buffer = new byte[publicKeyLength];
+            for(int i = 0; i < publicKeyLength; i++) {
+                buffer[i] = is.readByte();
+            }
+            publicKey = new BigInteger(buffer);
+            privateKeyLength = is.readInt();
+            buffer = new byte[privateKeyLength];
+            for(int i = 0; i < privateKeyLength; i++) {
+                buffer[i] = is.readByte();
+            }
+            privateKey = new BigInteger(buffer);
+            keyExponent = is.readInt();
             
         } catch (FileNotFoundException ex) {
             Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -258,6 +287,8 @@ public class TUI {
             Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        return null;
+        KeyGroup keys = new KeyGroup(publicKey, privateKey, keyExponent);
+        
+        return keys;
     }
 }
