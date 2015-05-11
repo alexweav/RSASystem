@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 5-8-2015 5:14pm
+//Last update: 5-11-2015 1:53pm
 package Util;
 
 import java.math.BigInteger;
@@ -64,5 +64,18 @@ public class EncodingManager {
             sb.append(current);
         }
         return sb.toString();
+    }
+    
+    public String[] separate(String text, int sectionLength) {
+        int length = text.length();
+        String[] separatedText = new String[length/sectionLength + 1];
+        for(int i = 0; i < separatedText.length; i++) {
+            try {
+                separatedText[i] = text.substring(i*32, i*32 + 31);
+            } catch(StringIndexOutOfBoundsException e) {
+                separatedText[i] = text.substring(i*32);
+            }
+        }
+        return separatedText;
     }
 }

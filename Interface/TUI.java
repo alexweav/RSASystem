@@ -1,14 +1,12 @@
 //Alexander Weaver
-//Last update: 5-8-2015 8:11pm
+//Last update: 5-11-2015 1:53pm
 package Interface;
 
 
 import Encryption.*;
 import Util.EncodingManager;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -88,14 +86,27 @@ public class TUI {
             exponent = keys.getKeyExponent();
         }
         String message = getMessage();
-        System.out.println("The message is " + message);
         EncodingManager pad = new EncodingManager();
-        String hex = pad.textToHexASCII(message);
-        BigInteger padded = pad.hexToBigInteger(hex);
-        System.out.println("Message value is " + padded.toString());
+        String[] separatedMessage = pad.separate(message, 32);
+        int length = separatedMessage.length;
+        System.out.println("Message has been separated into the following sections:");
+        for(int i = 0; i < length; i++) {
+            System.out.println(separatedMessage[i]);
+        }
+        System.out.println("Message values of these sections are:");
+        BigInteger[] paddedMessages = new BigInteger[length];
+        for(int i = 0; i < length; i++) {
+            String hex = pad.textToHexASCII(separatedMessage[i]);
+            paddedMessages[i] = pad.hexToBigInteger(hex);
+            System.out.println(paddedMessages[i].toString());
+        }
         Encryptor encryptor = new Encryptor();
-        BigInteger encryptedMessage = encryptor.encrypt(padded, exponent, publicKey);
-        System.out.println("Encrypted message value is " + encryptedMessage.toString());
+        System.out.println("The encrypted message values are:");
+        for(int i = 0; i < length; i++) {
+            BigInteger encryptedMessage = encryptor.encrypt(paddedMessages[i], exponent, publicKey);
+            System.out.println(encryptedMessage.toString());
+        }
+        
     }
     
     private void decrypt() {
