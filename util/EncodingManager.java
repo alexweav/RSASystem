@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 5-11-2015 1:53pm
+//Last update: 5-13-2015 1:52am
 package Util;
 
 import java.math.BigInteger;
@@ -68,6 +68,9 @@ public class EncodingManager {
     
     public String[] separate(String text, int sectionLength) {
         int length = text.length();
+        if(length == 0) {
+            return new String[0];
+        }
         String[] separatedText = new String[length/sectionLength + 1];
         for(int i = 0; i < separatedText.length; i++) {
             try {
@@ -77,5 +80,14 @@ public class EncodingManager {
             }
         }
         return separatedText;
+    }
+    
+    public String joinStrings(String[] strings) {
+        int length = strings.length;
+        String joined = "";
+        for(int i = 0; i < length; i++) {
+            joined += strings[i];
+        }
+        return joined;
     }
 }

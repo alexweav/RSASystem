@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 5-11-2015 1:53pm
+//Last update: 5-13-2015 1:52am
 package Interface;
 
 
@@ -113,6 +113,7 @@ public class TUI {
         BigInteger publicKey = null;
         BigInteger privateKey = null;
         BigInteger cipherText = null;
+        BigInteger[] cipherTextSequence = null;
         System.out.println("Which keyset source would you like to use?");
         System.out.println("1. Manually enter a keyset");
         System.out.println("2. Use an existing keyset certificate file");
@@ -131,16 +132,19 @@ public class TUI {
             KeyGroup keys = getCertificate();
             publicKey = keys.getPublicKey();
             privateKey = keys.getPrivateKey();
-            cipherText = getCipherText();
+            cipherTextSequence = getCipherTextSequence();
         }
-        
         EncodingManager pad = new EncodingManager();
-        System.out.println("Cipher text value is " + cipherText.toString());
         Encryptor encryptor = new Encryptor();
-        BigInteger decryptedMessage = encryptor.decrypt(cipherText, privateKey, publicKey);
-        System.out.println("Decrypted message value is " + decryptedMessage.toString());
-        String dHex = pad.bigIntegerToHex(decryptedMessage);
-        String decryptedText = pad.hexToTextASCII(dHex);
+        int length = cipherTextSequence.length;
+        String[] decryptedMessages = new String[length];
+        for(int i = 0; i < length; i++) {
+            BigInteger mValue = encryptor.decrypt(cipherTextSequence[i], privateKey, publicKey);
+            String dHex = pad.bigIntegerToHex(mValue);
+            String decryptedText = pad.hexToTextASCII(dHex);
+            decryptedMessages[i] = decryptedText;
+        }
+        String decryptedText = pad.joinStrings(decryptedMessages);
         System.out.println("Decrypted text:");
         System.out.println(decryptedText);
     }
@@ -217,9 +221,25 @@ public class TUI {
     }
     
     private BigInteger getCipherText() {
-        System.out.println("Please input the cipher value to be decrypted.");
+        System.out.println("Please input the cipher values to be decrypted.  Multiple values should be separated by commas.");
         Scanner in = new Scanner(System.in);
         return in.nextBigInteger();
+    }
+    
+    private BigInteger[] getCipherTextSequence() {
+        System.out.println("Please input the cipher values to be decrypted.  Multiple values should be separated by commas.");
+        Scanner in = new Scanner(System.in);
+        String line;
+        String[] stringValues;
+        line = in.nextLine();
+        stringValues = line.split(",");
+        int length = stringValues.length;
+        BigInteger[] values = new BigInteger[length];
+        for(int i = 0; i < length; i++) {
+            stringValues[i] = stringValues[i].replaceAll("\\s", "");
+            values[i] = new BigInteger(stringValues[i]);
+        }
+        return values;
     }
     
     /*
