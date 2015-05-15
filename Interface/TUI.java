@@ -1,15 +1,18 @@
 //Alexander Weaver
-//Last update: 5-13-2015 1:52am
+//Last update: 5-14-2015 8:05pm
 package Interface;
 
 
 import Encryption.*;
 import Util.EncodingManager;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -85,6 +88,24 @@ public class TUI {
             publicKey = keys.getPublicKey();
             exponent = keys.getKeyExponent();
         }
+        System.out.println("How will the text be provided?");
+        System.out.println("1. Type the text into the console");
+        System.out.println("2. Link a text file");
+        option = in.nextInt();
+        while(option < 1 && option > 2) {
+            System.out.println("Invalid input. Please choose one of the given options.");
+            option = in.nextInt();
+        }
+        if(option == 1) {
+            encryptGivenText(exponent, publicKey);
+        } else if (option == 2) {
+            encryptTextFile(exponent, publicKey);
+        }
+        
+        
+    }
+    
+    private void encryptGivenText(int exponent, BigInteger publicKey) {
         String message = getMessage();
         EncodingManager pad = new EncodingManager();
         String[] separatedMessage = pad.separate(message, 32);
@@ -93,20 +114,68 @@ public class TUI {
         for(int i = 0; i < length; i++) {
             System.out.println(separatedMessage[i]);
         }
-        System.out.println("Message values of these sections are:");
         BigInteger[] paddedMessages = new BigInteger[length];
         for(int i = 0; i < length; i++) {
             String hex = pad.textToHexASCII(separatedMessage[i]);
             paddedMessages[i] = pad.hexToBigInteger(hex);
-            System.out.println(paddedMessages[i].toString());
         }
         Encryptor encryptor = new Encryptor();
         System.out.println("The encrypted message values are:");
         for(int i = 0; i < length; i++) {
             BigInteger encryptedMessage = encryptor.encrypt(paddedMessages[i], exponent, publicKey);
-            System.out.println(encryptedMessage.toString());
+            if(i < length - 1) {
+                System.out.print(encryptedMessage.toString() + ", ");
+            } else {
+                System.out.print(encryptedMessage.toString() + "\n");
+            }
         }
-        
+    }
+    
+    public void encryptTextFile(int exponent, BigInteger publicKey) {
+        System.out.println("Enter the name of the existing text file (without file extension). This assumes the file is in the proper location (will be fixed to allow any location).");
+        Scanner in = new Scanner(System.in);
+        String name = in.next();
+        String textName = name + ".txt";
+        String encryptedName = name + "_e" + ".txt";
+        Encryptor encryptor = new Encryptor();
+        EncodingManager pad = new EncodingManager();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(textName));
+            FileWriter fileStream = new FileWriter(encryptedName);
+            BufferedWriter writer = new BufferedWriter(fileStream);
+            StringBuilder sb = new StringBuilder();
+            
+            //http://stackoverflow.com/questions/4716503/best-way-to-read-a-text-file
+            
+            //read text file line, encrypt, write line to encrypted file for all lines in text file
+            
+            String line = reader.readLine();
+            while(line != null) {
+                System.out.println("Current line: " + line);
+                String[] separatedMessage = pad.separate(line, 32);
+                int length = separatedMessage.length;
+                BigInteger paddedMessage;
+                for(int i = 0; i < length; i++) {
+                    String hex = pad.textToHexASCII(separatedMessage[i]);
+                    paddedMessage = pad.hexToBigInteger(hex);
+                    BigInteger encryptedMessage = encryptor.encrypt(paddedMessage, exponent, publicKey);
+                    if(i < length - 1) {
+                        writer.write(encryptedMessage.toString() + ", ");
+                    } else {
+                        writer.write(encryptedMessage.toString());
+                        writer.newLine();
+                    }
+                }
+                line = reader.readLine();
+            }
+            writer.close();
+            System.out.println("An encrypted version of the given file has been created.");
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private void decrypt() {
