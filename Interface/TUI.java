@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 5-14-2015 8:05pm
+//Last update: 5-15-2015 1:23am
 package Interface;
 
 
@@ -136,7 +136,9 @@ public class TUI {
         Scanner in = new Scanner(System.in);
         String name = in.next();
         String textName = name + ".txt";
-        String encryptedName = name + "_e" + ".txt";
+        System.out.println("Enter the name of the encrypted file.");
+        String encryptedName = in.next();
+        encryptedName = encryptedName + ".txt";
         Encryptor encryptor = new Encryptor();
         EncodingManager pad = new EncodingManager();
         try {
@@ -144,14 +146,8 @@ public class TUI {
             FileWriter fileStream = new FileWriter(encryptedName);
             BufferedWriter writer = new BufferedWriter(fileStream);
             StringBuilder sb = new StringBuilder();
-            
-            //http://stackoverflow.com/questions/4716503/best-way-to-read-a-text-file
-            
-            //read text file line, encrypt, write line to encrypted file for all lines in text file
-            
             String line = reader.readLine();
             while(line != null) {
-                System.out.println("Current line: " + line);
                 String[] separatedMessage = pad.separate(line, 32);
                 int length = separatedMessage.length;
                 BigInteger paddedMessage;
@@ -182,11 +178,9 @@ public class TUI {
         BigInteger publicKey = null;
         BigInteger privateKey = null;
         BigInteger cipherText = null;
-        BigInteger[] cipherTextSequence = null;
         System.out.println("Which keyset source would you like to use?");
         System.out.println("1. Manually enter a keyset");
         System.out.println("2. Use an existing keyset certificate file");
-        //todo: finish choice
         Scanner in = new Scanner(System.in);
         int option = in.nextInt();
         while(option < 1 || option > 2) {
@@ -196,13 +190,29 @@ public class TUI {
         if(option == 1) {
             publicKey = getPublicKey();
             privateKey = getPrivateKey();
-            cipherText = getCipherText();
         } else {
             KeyGroup keys = getCertificate();
             publicKey = keys.getPublicKey();
             privateKey = keys.getPrivateKey();
-            cipherTextSequence = getCipherTextSequence();
         }
+        System.out.println("How will the cipher text be provided?");
+        System.out.println("1. Type the text into the console");
+        System.out.println("2. Link a text file");
+        option = in.nextInt();
+        while(option < 1 && option > 2) {
+            System.out.println("Invalid input. Please choose one of the given options.");
+            option = in.nextInt();
+        }
+        if(option == 1) {
+            decryptGivenText(privateKey, publicKey);
+        } else if(option == 2) {
+            decryptTextFile(privateKey, publicKey);
+        }
+    }
+    
+    private void decryptGivenText(BigInteger privateKey, BigInteger publicKey) {
+        BigInteger[] cipherTextSequence;
+        cipherTextSequence = getCipherTextSequence();
         EncodingManager pad = new EncodingManager();
         Encryptor encryptor = new Encryptor();
         int length = cipherTextSequence.length;
@@ -216,6 +226,48 @@ public class TUI {
         String decryptedText = pad.joinStrings(decryptedMessages);
         System.out.println("Decrypted text:");
         System.out.println(decryptedText);
+    }
+    
+    private void decryptTextFile(BigInteger privateKey, BigInteger publicKey) {
+        System.out.println("Enter the name of the existing cipher text file (without file extension). This assumes the file is in the proper location (will be fixed to allow any location).");
+        Scanner in = new Scanner(System.in);
+        String name = in.next();
+        String cipherName = name + ".txt";
+        System.out.println("Enter the name of the plaintext file.");
+        String decryptedName = in.next();
+        decryptedName = decryptedName + ".txt";
+        Encryptor encryptor = new Encryptor();
+        EncodingManager pad = new EncodingManager();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(cipherName));
+            FileWriter fileStream = new FileWriter(decryptedName);
+            BufferedWriter writer = new BufferedWriter(fileStream);
+            StringBuilder sb = new StringBuilder();
+            String line = reader.readLine();
+            //
+            while(line != null) {
+                BigInteger[] cipherTextSequence = parseValues(line);
+                int length = cipherTextSequence.length;
+                String[] decryptedMessages = new String[length];
+                for(int i = 0; i < length; i++) {
+                    BigInteger mValue = encryptor.decrypt(cipherTextSequence[i], privateKey, publicKey);
+                    String dHex = pad.bigIntegerToHex(mValue);
+                    String decryptedText = pad.hexToTextASCII(dHex);
+                    decryptedMessages[i] = decryptedText;
+                }
+                String decryptedText = pad.joinStrings(decryptedMessages);
+                writer.write(decryptedText);
+                writer.newLine();
+                line = reader.readLine();
+            }
+            writer.close();
+            System.out.println("An decrypted version of the given file has been created.");
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private KeyGroup generateKeySet() {
@@ -289,19 +341,17 @@ public class TUI {
         return in.nextLine();
     }
     
-    private BigInteger getCipherText() {
-        System.out.println("Please input the cipher values to be decrypted.  Multiple values should be separated by commas.");
-        Scanner in = new Scanner(System.in);
-        return in.nextBigInteger();
-    }
-    
     private BigInteger[] getCipherTextSequence() {
         System.out.println("Please input the cipher values to be decrypted.  Multiple values should be separated by commas.");
         Scanner in = new Scanner(System.in);
         String line;
         String[] stringValues;
         line = in.nextLine();
-        stringValues = line.split(",");
+        return parseValues(line);
+    }
+    
+    private BigInteger[] parseValues(String str) {
+        String[] stringValues = str.split(",");
         int length = stringValues.length;
         BigInteger[] values = new BigInteger[length];
         for(int i = 0; i < length; i++) {
