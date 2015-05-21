@@ -1,10 +1,10 @@
 //Alexander Weaver
-//Last update: 5-15-2015 1:26am
+//Last update: 5-21-2015 2:30pm
 package Interface;
 
 //main class
 
-import GUI.GUI;
+import GUI.Window;
 
 public class RSASystem {
     
@@ -18,7 +18,7 @@ public class RSASystem {
             System.out.println("Initiating program with text-based interface.");
             (new TUI()).init();
         } else if(numArgs > 0 && "window".equals(argv[0])) {
-            (new GUI()).init();
+            Window window = new Window();
         } else {
             System.out.println("No recognized argument. Defaulting to text interface.");
             (new TUI()).init();
