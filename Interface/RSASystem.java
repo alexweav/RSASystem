@@ -3,6 +3,9 @@
 package Interface;
 
 //main class
+
+import GUI.GUI;
+
 public class RSASystem {
     
     //main method for program. manages arguments.
