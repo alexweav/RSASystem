@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 5-23-2015 6:32pm
+//Last update: 5-23-2015 8:53pm
 package GUI;
 
 import javax.swing.*;
@@ -11,13 +11,16 @@ import java.awt.event.ActionListener;
 
 public class OutputPanel extends JPanel implements ActionListener {
     
+    //tracks the text in the status pane
     private String statusText = "";
+    
+    //the text box in the status pane
     private JEditorPane textArea;
     
-    public OutputPanel(JComponent parent, int width, int height) {
-        this.setMaximumSize(new Dimension(width, height));
+    //constructor, sequentially builds the output panel
+    public OutputPanel(int width, int height) {
+        this.setPreferredSize(new Dimension(width, height));
         this.setLayout(new BorderLayout());
-        parent.add(this);
         JLabel label = new JLabel("Status:");
         this.add(label, BorderLayout.PAGE_START);
         textArea = new JEditorPane();
@@ -32,8 +35,10 @@ public class OutputPanel extends JPanel implements ActionListener {
         this.add(clipboardButton, BorderLayout.LINE_END);
     }
     
+    //actions method for interactible items
+    @Override
     public void actionPerformed(ActionEvent e) {
-        if("copyText".equals(e.getActionCommand())) {
+        if("copyText".equals(e.getActionCommand())) {   //copies status pane to clipboard
             System.out.println("copy");
             StringSelection ss = new StringSelection(statusText);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -41,11 +46,13 @@ public class OutputPanel extends JPanel implements ActionListener {
         }
     }
     
+    //sets the text in the status box to the given string
     public void setStatusText(String str) {
         statusText = str;
         textArea.setText(statusText);
     }
     
+    //returns the text in the status box
     public String getStatusText() {
         return statusText;
     }

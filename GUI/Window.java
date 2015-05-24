@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 5-21-2015 4:59pm
+//Last update: 5-23-2015 8:53pm
 package GUI;
 
 import java.awt.*;
@@ -19,8 +19,10 @@ public class Window extends JFrame {
         JPanel container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
         this.add(container);
-        ControlsPanel controlsPanel = new ControlsPanel((JComponent) container, WINDOW_WIDTH, TAB_HEIGHT);
-        OutputPanel outputPanel = new OutputPanel((JComponent)container, WINDOW_WIDTH, OUTPUT_HEIGHT);
+        OutputPanel outputPanel = new OutputPanel(WINDOW_WIDTH, OUTPUT_HEIGHT);
+        ControlsPanel controlsPanel = new ControlsPanel(WINDOW_WIDTH, TAB_HEIGHT, outputPanel);
+        container.add(controlsPanel);
+        container.add(outputPanel);
         this.setVisible(true);
     }
 }
