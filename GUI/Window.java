@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 5-23-2015 8:53pm
+//Last update: 5-23-2015 11:37pm
 package GUI;
 
 import java.awt.*;
@@ -16,6 +16,7 @@ public class Window extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.setLocationRelativeTo(null);
+        this.setTitle("RSA Encryptor");
         JPanel container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
         this.add(container);
