@@ -1,9 +1,13 @@
 //Alexander Weaver
-//Last update: 5-23-2015 11:37pm
+//Last update: 5-26-2015 6:36pm
 package GUI;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.*;
 import javax.swing.*;
 
 public class KeyGenerationPanel extends JPanel implements ActionListener {
@@ -11,12 +15,14 @@ public class KeyGenerationPanel extends JPanel implements ActionListener {
     private OutputPanel outputPanel;
     
     private boolean creatingNewSet;
+    private KeyLengthBox keyLengthBox;
     
     public KeyGenerationPanel(OutputPanel op) {
         outputPanel = op;
         creatingNewSet = true;
         
-
+        JLabel test = new JLabel("test");
+        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         JPanel header = new JPanel();
         header.setLayout(new BoxLayout(header, BoxLayout.PAGE_AXIS));
         JLabel title = new JLabel("How do you wish to obtain the key values?");
@@ -24,13 +30,22 @@ public class KeyGenerationPanel extends JPanel implements ActionListener {
         header.add(title);
         addRadioButtons(header);
         this.add(header);
-        
+        JPanel body = new JPanel();
+        body.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 0.5;
+        c.weighty = 1;
+        c.gridx = 0;
+        c.gridy = 0;
         JPanel leftPanel = new JPanel();
-        this.add(leftPanel);
-        
+        buildLeftPanel(leftPanel);
+        body.add(leftPanel, c);
         JPanel rightPanel = new JPanel();
-        this.add(rightPanel);
-        
+        buildRightPanel(rightPanel);
+        c.gridx = 1;
+        body.add(rightPanel, c);
+        this.add(body);
     }
     
     public void setOutputPanel(OutputPanel op) {
@@ -68,10 +83,26 @@ public class KeyGenerationPanel extends JPanel implements ActionListener {
         if("createNew".equals(e.getActionCommand())) {
             System.out.println("new");
             creatingNewSet = true;
+            keyLengthBox.activate();
         } else if ("useExisting".equals(e.getActionCommand())) {
             System.out.println("existing");
             creatingNewSet = false;
+            keyLengthBox.deactivate();
         }
+    }
+    
+    private void buildLeftPanel(JPanel container) {
+        container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
+        container.setBackground(Color.yellow);
+        keyLengthBox = new KeyLengthBox();
+        container.add(keyLengthBox);
+        JPanel panel = new JPanel();
+        container.add(panel);
+    }
+    
+    private void buildRightPanel(JPanel container) {
+        container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
+        container.setBackground(Color.GREEN);
     }
     
 }

@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 5-23-2015 11:37pm
+//Last update: 5-24-2015 2:35pm
 package GUI;
 
 import javax.swing.*;
@@ -26,6 +26,7 @@ public class OutputPanel extends JPanel implements ActionListener {
         textArea = new JEditorPane();
         JScrollPane editorScrollPane = new JScrollPane(textArea);
         textArea.setText(statusText);
+        textArea.setEditable(false);
         editorScrollPane.setPreferredSize(new Dimension(450, 60));
         editorScrollPane.setMinimumSize(new Dimension(450, 60));
         this.add(editorScrollPane, BorderLayout.CENTER);
