@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 5-27-2015 6:19pm
+//Last update: 5-28-2015 6:54pm
 package GUI;
 
 import java.awt.Color;
@@ -17,6 +17,7 @@ public class KeyGenerationPanel extends JPanel implements ActionListener {
     private boolean creatingNewSet;
     private KeyLengthBox keyLengthBox;
     private FilepathBox filepathBox;
+    private NameBox nameBox;
     
     public KeyGenerationPanel(OutputPanel op) {
         outputPanel = op;
@@ -86,11 +87,13 @@ public class KeyGenerationPanel extends JPanel implements ActionListener {
             creatingNewSet = true;
             keyLengthBox.activate();
             filepathBox.activate();
+            nameBox.activate();
         } else if ("useExisting".equals(e.getActionCommand())) {
             System.out.println("existing");
             creatingNewSet = false;
             keyLengthBox.deactivate();
             filepathBox.deactivate();
+            nameBox.deactivate();
         }
     }
     
@@ -99,6 +102,8 @@ public class KeyGenerationPanel extends JPanel implements ActionListener {
         container.setBackground(Color.yellow);
         keyLengthBox = new KeyLengthBox();
         container.add(keyLengthBox);
+        nameBox = new NameBox();
+        container.add(nameBox);
         filepathBox = new FilepathBox();
         container.add(filepathBox);
         
