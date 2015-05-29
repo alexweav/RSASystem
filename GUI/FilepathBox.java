@@ -1,8 +1,9 @@
 //Alexander Weaver
-//Last update: 5-27-2015 6:19pm
+//Last update: 5-28-2015 7:27pm
 package GUI;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -18,6 +19,8 @@ public class FilepathBox extends JPanel implements ActionListener {
     private JButton browseButton;
     
     public FilepathBox() {
+        this.setPreferredSize(new Dimension(0, 70));
+        this.setMaximumSize(new Dimension(600, 70));
         SpringLayout layout = new SpringLayout();
         this.setLayout(layout);
         label = new JLabel("File Location");

@@ -1,8 +1,9 @@
 //Alexander Weaver
-//Last update: 5-28-2015 7:04pm
+//Last update: 5-28-2015 7:51pm
 package GUI;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
@@ -16,6 +17,8 @@ public class NameBox extends JPanel implements ActionListener {
     private String errorMessage = "";
     
     public NameBox() {
+        this.setPreferredSize(new Dimension(0, 40));
+        this.setMaximumSize(new Dimension(600, 40));
         SpringLayout layout = new SpringLayout();
         this.setLayout(layout);
         label = new JLabel("Certificate Name");
