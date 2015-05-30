@@ -23,6 +23,7 @@ public class KeyGenerationPanel extends JPanel implements ActionListener {
     private KeyValuesBox keyValuesBox;
     private NameBox rightNameBox;
     private FilepathBox rightFilepathBox;
+    private CreateBox createBox;
     
     public KeyGenerationPanel(OutputPanel op) {
         outputPanel = op;
@@ -97,6 +98,7 @@ public class KeyGenerationPanel extends JPanel implements ActionListener {
             keyValuesBox.deactivate();
             rightNameBox.deactivate();
             rightFilepathBox.deactivate();
+            createBox.deactivate();
         } else if ("useExisting".equals(e.getActionCommand())) {
             System.out.println("existing");
             creatingNewSet = false;
@@ -107,6 +109,7 @@ public class KeyGenerationPanel extends JPanel implements ActionListener {
             keyValuesBox.activate();
             rightNameBox.activate();
             rightFilepathBox.activate();
+            createBox.activate();
         }
     }
     
@@ -126,7 +129,6 @@ public class KeyGenerationPanel extends JPanel implements ActionListener {
     
     private void buildRightPanel(JPanel container) {
         container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
-        container.setBackground(Color.GREEN);
         keyValuesBox = new KeyValuesBox();
         container.add(keyValuesBox);
         rightNameBox = new NameBox();
@@ -135,6 +137,9 @@ public class KeyGenerationPanel extends JPanel implements ActionListener {
         rightFilepathBox = new FilepathBox();
         rightFilepathBox.deactivate();
         container.add(rightFilepathBox);
+        createBox = new CreateBox(keyValuesBox, rightNameBox, rightFilepathBox);
+        container.add(createBox);
+        
     }
     
 }
