@@ -1,8 +1,9 @@
 //Alexander Weaver
-//Last update: 5-23-2015 9:15pm
+//Last update: 6-5-2015 2:27am
 package GUI;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.*;
@@ -38,12 +39,39 @@ public class EncryptionPanel extends JPanel {
     }
     
     private void buildLeftPanel(JPanel container) {
+        container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
         container.setBackground(Color.GREEN);
+        InputTypeChooser inputTypeChooser = new InputTypeChooser(this);
+        container.add(inputTypeChooser);
         
     }
     
     private void buildRightPanel(JPanel container) {
+        container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
         container.setBackground(Color.YELLOW);
+        
+    }
+    
+    private void addChooser(JPanel container) {
+        JPanel chooserContainer = new JPanel();
+        chooserContainer.setPreferredSize(new Dimension(0, 70));
+        chooserContainer.setMaximumSize(new Dimension(600, 70));
+        JLabel label = new JLabel("What would you like to encrypt?");
+        chooserContainer.add(label);
+        JPanel radioButtonContainer = new JPanel();
+        chooserContainer.add(radioButtonContainer);
+        container.add(chooserContainer);
+    }
+    
+    protected void setInputSelection() {
+        
+    }
+    
+    protected void setFileSelection() {
+        
+    }
+    
+    protected void setOtherSelection() {
         
     }
 }
