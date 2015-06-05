@@ -1,7 +1,8 @@
 //Alexander Weaver
-//Last update: 4-19-2015 7:13pm
+//Last update: 6-1-2015 4:46pm
 package Primality;
 
+//Set of parameters for the Miller Rabin primality test
 public class MRParameter {
     
     private int n;

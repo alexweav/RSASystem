@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 5-15-2015 1:23am
+//Last update: 6-5-2015 1:39am
 package Interface;
 
 
@@ -36,6 +36,7 @@ public class TUI {
         System.out.println("******************************************************************************\n");
     }
     
+    //Main menu, loops until program exit
     private void mainMenu() {
         while(true) {
             System.out.println("What would you like to do? Enter a number for its corresponding option.");
@@ -62,6 +63,8 @@ public class TUI {
         }
     }
     
+    //Collection of user choices and corresponding management
+    //Allows the user to encrypt given text or a linked text file
     private void encrypt() {
         System.out.println("Which keyset would you like to use?");
         System.out.println("1. Generate a new keyset");
@@ -105,6 +108,9 @@ public class TUI {
         
     }
     
+    //Takes a given exponent and public key
+    //Gets text from the user
+    //Encrypts the text according to the given values
     private void encryptGivenText(int exponent, BigInteger publicKey) {
         String message = getMessage();
         EncodingManager pad = new EncodingManager();
@@ -131,6 +137,9 @@ public class TUI {
         }
     }
     
+    //Takes an exponent and a public key
+    //Gets a linked text file from the user
+    //Produces an encrypted text file based upon the given values
     public void encryptTextFile(int exponent, BigInteger publicKey) {
         System.out.println("Enter the name of the existing text file (without file extension). This assumes the file is in the proper location (will be fixed to allow any location).");
         Scanner in = new Scanner(System.in);
@@ -174,6 +183,7 @@ public class TUI {
         }
     }
     
+    //The decryption menu section
     private void decrypt() {
         BigInteger publicKey = null;
         BigInteger privateKey = null;
@@ -210,6 +220,9 @@ public class TUI {
         }
     }
     
+    //Takes a private key and a public key, both in BigInteger form
+    //Gets ciphertext from the user
+    //Decrypts the ciphertext according to given values and prints the result to console
     private void decryptGivenText(BigInteger privateKey, BigInteger publicKey) {
         BigInteger[] cipherTextSequence;
         cipherTextSequence = getCipherTextSequence();
@@ -228,6 +241,9 @@ public class TUI {
         System.out.println(decryptedText);
     }
     
+    //Takes a private key and a public key, both in BigInteger format
+    //Gets ciphertext file from the user
+    //Decrypts the ciphertext according to given values and prints the result to console
     private void decryptTextFile(BigInteger privateKey, BigInteger publicKey) {
         System.out.println("Enter the name of the existing cipher text file (without file extension). This assumes the file is in the proper location (will be fixed to allow any location).");
         Scanner in = new Scanner(System.in);
@@ -270,6 +286,7 @@ public class TUI {
         }
     }
     
+    //The menu section for producing a new keyset
     private KeyGroup generateKeySet() {
         System.out.println("Please input the key length in bits.  Must be greater than or equal to 4, and must be even.");
         Scanner in = new Scanner(System.in);
@@ -302,6 +319,7 @@ public class TUI {
         return keys;
     }
     
+    //Gets a public key value from the user via console
     private BigInteger getPublicKey() {
         System.out.println("Please input the public key.");
         Scanner in = new Scanner(System.in);
@@ -313,6 +331,7 @@ public class TUI {
         return key;
     }
     
+    //Gets a private key value from the user via console
     private BigInteger getPrivateKey() {
         System.out.println("Please input the private key.");
         Scanner in = new Scanner(System.in);
@@ -324,6 +343,7 @@ public class TUI {
         return key;
     }
     
+    //Gets an exponent value from the user via console
     private int getExponent() {
         System.out.println("Please input the key exponent.");
         Scanner in = new Scanner(System.in);
@@ -335,12 +355,14 @@ public class TUI {
         return exp;
     }
     
+    //Gets a message string from the user via console
     private String getMessage() {
         System.out.println("Please input the plaintext to be encrypted.");
         Scanner in = new Scanner(System.in);
         return in.nextLine();
     }
     
+    //Gets a sequence of comma separated ciphertexts from the user via console
     private BigInteger[] getCipherTextSequence() {
         System.out.println("Please input the cipher values to be decrypted.  Multiple values should be separated by commas.");
         Scanner in = new Scanner(System.in);
@@ -350,6 +372,7 @@ public class TUI {
         return parseValues(line);
     }
     
+    //Parses a string of comma separated integers into an array of BigIntegers
     private BigInteger[] parseValues(String str) {
         String[] stringValues = str.split(",");
         int length = stringValues.length;
@@ -371,6 +394,7 @@ public class TUI {
     The first int denotes the length of the first byte array.
     The second int denotes the length of the second byte array.
     */
+    //Takes a keygroup, saves that keygroup as a certificate file on the hard drive
     private void saveCertificate(KeyGroup keys) {
         System.out.println("Please enter a name for the certificate file.");
         Scanner in = new Scanner(System.in);
@@ -403,6 +427,7 @@ public class TUI {
         System.out.println("New file, named " + name + " has been created and the key set has been written to it.");
     }
     
+    //Fetches a certificate file from the hard drive
     private KeyGroup getCertificate() {
         int publicKeyLength;
         int privateKeyLength;
