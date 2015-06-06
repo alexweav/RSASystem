@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-6-2015 6:18pm
+//Last update: 6-6-2015 6:42pm
 package GUI;
 
 import java.awt.Color;
@@ -15,6 +15,9 @@ public class EncryptionPanel extends JPanel {
     private NameBox certificateNameBox;
     private FilepathBox certificateFilepathBox;
     private FileBox certificateFileBox;
+    private StringBox stringBox;
+    private FileBox textFileBox;
+    private FileBox otherFileBox;
     
     public EncryptionPanel(OutputPanel op) {
        outputPanel = op; 
@@ -47,6 +50,14 @@ public class EncryptionPanel extends JPanel {
         container.setBackground(Color.GREEN);
         InputTypeChooser inputTypeChooser = new InputTypeChooser(this);
         container.add(inputTypeChooser);
+        stringBox = new StringBox();
+        container.add(stringBox);
+        textFileBox = new FileBox();
+        textFileBox.deactivate();
+        container.add(textFileBox);
+        otherFileBox = new FileBox();
+        otherFileBox.deactivate();
+        container.add(otherFileBox);
         
     }
     
@@ -78,15 +89,21 @@ public class EncryptionPanel extends JPanel {
     }
     
     protected void setInputSelection() {
-        
+        stringBox.activate();
+        textFileBox.deactivate();
+        otherFileBox.deactivate();
     }
     
     protected void setFileSelection() {
-        
+        stringBox.deactivate();
+        textFileBox.activate();
+        otherFileBox.deactivate();
     }
     
     protected void setOtherSelection() {
-        
+        stringBox.deactivate();
+        textFileBox.deactivate();
+        otherFileBox.activate();
     }
     
     protected void setNewKeysetSelection() {
