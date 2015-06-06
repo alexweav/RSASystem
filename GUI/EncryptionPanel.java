@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-5-2015 6:54pm
+//Last update: 6-6-2015 6:18pm
 package GUI;
 
 import java.awt.Color;
@@ -14,6 +14,7 @@ public class EncryptionPanel extends JPanel {
     private KeyLengthBox keyLengthBox;
     private NameBox certificateNameBox;
     private FilepathBox certificateFilepathBox;
+    private FileBox certificateFileBox;
     
     public EncryptionPanel(OutputPanel op) {
        outputPanel = op; 
@@ -60,6 +61,9 @@ public class EncryptionPanel extends JPanel {
         container.add(certificateNameBox);
         certificateFilepathBox = new FilepathBox();
         container.add(certificateFilepathBox);
+        certificateFileBox = new FileBox();
+        certificateFileBox.deactivate();
+        container.add(certificateFileBox);
     }
     
     private void addChooser(JPanel container) {
@@ -89,11 +93,13 @@ public class EncryptionPanel extends JPanel {
         keyLengthBox.activate();
         certificateNameBox.activate();
         certificateFilepathBox.activate();
+        certificateFileBox.deactivate();
     }
     
     protected void setUseExistingSelection() {
         keyLengthBox.deactivate();
         certificateNameBox.deactivate();
         certificateFilepathBox.deactivate();
+        certificateFileBox.activate();
     }
 }
