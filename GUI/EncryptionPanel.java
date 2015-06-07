@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-6-2015 6:42pm
+//Last update: 6-6-2015 7:50pm
 package GUI;
 
 import java.awt.Color;
@@ -19,6 +19,9 @@ public class EncryptionPanel extends JPanel {
     private FileBox textFileBox;
     private FileBox otherFileBox;
     
+    private int plaintextOption;
+    private int keysetOption;
+    
     public EncryptionPanel(OutputPanel op) {
        outputPanel = op; 
        this.setLayout(new GridBagLayout());
@@ -33,8 +36,12 @@ public class EncryptionPanel extends JPanel {
        this.add(leftPanel, c);
        JPanel rightPanel = new JPanel();
        buildRightPanel(rightPanel);
+       EncryptButton encryptButton = new EncryptButton(this, stringBox, textFileBox, otherFileBox, keyLengthBox, certificateNameBox, certificateFilepathBox, certificateFileBox);
+       leftPanel.add(encryptButton);
        c.gridx = 1;
        this.add(rightPanel, c);
+       plaintextOption = 1;
+       keysetOption = 1;
     }
     
     public void setOutputPanel(OutputPanel op) {
@@ -47,7 +54,6 @@ public class EncryptionPanel extends JPanel {
     
     private void buildLeftPanel(JPanel container) {
         container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
-        container.setBackground(Color.GREEN);
         InputTypeChooser inputTypeChooser = new InputTypeChooser(this);
         container.add(inputTypeChooser);
         stringBox = new StringBox();
@@ -59,11 +65,11 @@ public class EncryptionPanel extends JPanel {
         otherFileBox.deactivate();
         container.add(otherFileBox);
         
+        
     }
     
     private void buildRightPanel(JPanel container) {
         container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
-        container.setBackground(Color.YELLOW);
         KeySourceChooser keySourceChooser = new KeySourceChooser(this);
         container.add(keySourceChooser);
         keyLengthBox = new KeyLengthBox();
@@ -92,18 +98,21 @@ public class EncryptionPanel extends JPanel {
         stringBox.activate();
         textFileBox.deactivate();
         otherFileBox.deactivate();
+        plaintextOption = 1;
     }
     
     protected void setFileSelection() {
         stringBox.deactivate();
         textFileBox.activate();
         otherFileBox.deactivate();
+        plaintextOption = 2;
     }
     
     protected void setOtherSelection() {
         stringBox.deactivate();
         textFileBox.deactivate();
         otherFileBox.activate();
+        plaintextOption = 3;
     }
     
     protected void setNewKeysetSelection() {
@@ -111,6 +120,7 @@ public class EncryptionPanel extends JPanel {
         certificateNameBox.activate();
         certificateFilepathBox.activate();
         certificateFileBox.deactivate();
+        keysetOption = 1;
     }
     
     protected void setUseExistingSelection() {
@@ -118,5 +128,14 @@ public class EncryptionPanel extends JPanel {
         certificateNameBox.deactivate();
         certificateFilepathBox.deactivate();
         certificateFileBox.activate();
+        keysetOption = 2;
+    }
+    
+    protected int getPlaintextOption() {
+        return plaintextOption;
+    }
+    
+    protected int getKeysetOption() {
+        return keysetOption;
     }
 }
