@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-6-2015 7:50pm
+//Last update: 6-8-2015 5:41pm
 package GUI;
 
 import java.awt.Color;
@@ -54,7 +54,7 @@ public class EncryptionPanel extends JPanel {
     
     private void buildLeftPanel(JPanel container) {
         container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
-        InputTypeChooser inputTypeChooser = new InputTypeChooser(this);
+        InputTypeChooser inputTypeChooser = new InputTypeChooser(this, InputTypeChooser.ENCRYPT);
         container.add(inputTypeChooser);
         stringBox = new StringBox();
         container.add(stringBox);
