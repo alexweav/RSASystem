@@ -36,7 +36,7 @@ public class EncryptionPanel extends JPanel {
        this.add(leftPanel, c);
        JPanel rightPanel = new JPanel();
        buildRightPanel(rightPanel);
-       EncryptButton encryptButton = new EncryptButton(this, stringBox, textFileBox, otherFileBox, keyLengthBox, certificateNameBox, certificateFilepathBox, certificateFileBox);
+       EncryptButton encryptButton = new EncryptButton(this, stringBox, textFileBox, otherFileBox, keyLengthBox, certificateNameBox, certificateFilepathBox, certificateFileBox, outputPanel);
        leftPanel.add(encryptButton);
        c.gridx = 1;
        this.add(rightPanel, c);

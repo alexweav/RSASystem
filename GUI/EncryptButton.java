@@ -1,9 +1,11 @@
 //Alexander Weaver
-//Last update: 6-6-2015 7:50pm
+//Last update: 6-6-2015 10:09pm
 package GUI;
 
+import Encryption.Encryptor;
 import Encryption.KeyGroup;
 import Interface.TUI;
+import Util.EncodingManager;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,7 +35,9 @@ public class EncryptButton extends JPanel implements ActionListener {
     private FilepathBox filepathBox;
     private FileBox certificateFileBox;
     
-    public EncryptButton(EncryptionPanel ep, StringBox sb, FileBox tfb, FileBox ofb, KeyLengthBox klb, NameBox nb, FilepathBox fpb, FileBox cfb) {
+    private OutputPanel outputPanel;
+    
+    public EncryptButton(EncryptionPanel ep, StringBox sb, FileBox tfb, FileBox ofb, KeyLengthBox klb, NameBox nb, FilepathBox fpb, FileBox cfb, OutputPanel op) {
         encryptionPanel = ep;
         stringBox = sb;
         textFileBox = tfb;
@@ -42,6 +46,7 @@ public class EncryptButton extends JPanel implements ActionListener {
         nameBox = nb;
         filepathBox = fpb;
         certificateFileBox = cfb;
+        outputPanel = op;
         this.setPreferredSize(new Dimension(0, 40));
         this.setMaximumSize(new Dimension(600, 40));
         SpringLayout layout = new SpringLayout();
@@ -65,7 +70,7 @@ public class EncryptButton extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        KeyGroup keys;
+        KeyGroup keys = null;
         if(encryptionPanel.getKeysetOption() == 1) {
             keys = createNewKeyset();
         } else if(encryptionPanel.getKeysetOption() == 2) {
@@ -73,7 +78,7 @@ public class EncryptButton extends JPanel implements ActionListener {
         }
         
         if(encryptionPanel.getPlaintextOption() == 1) {
-            
+            encryptGivenText(keys);
         } else if (encryptionPanel.getPlaintextOption() == 2) {
             
         } else if (encryptionPanel.getPlaintextOption() == 3) {
@@ -166,5 +171,34 @@ public class EncryptButton extends JPanel implements ActionListener {
     
     private String doubleBackslashes(String string) {
         return string.replaceAll("\\\\", "\\\\\\\\");
+    }
+    
+    private void encryptGivenText(KeyGroup keys) {
+        String text = stringBox.getString();
+        if(text == null) {
+            return;
+        }
+        EncodingManager pad = new EncodingManager();
+        String[] separatedMessage = pad.separate(text, 32);
+        int length = separatedMessage.length;
+        BigInteger[] paddedMessages = new BigInteger[length];
+        for(int i = 0; i < length; i++) {
+            String hex = pad.textToHexASCII(separatedMessage[i]);
+            paddedMessages[i] = pad.hexToBigInteger(hex);
+        }
+        Encryptor encryptor = new Encryptor();
+        int exponent = keys.getKeyExponent();
+        BigInteger publicKey = keys.getPublicKey();
+        String output = "Encrypted values:\n";
+        for(int i = 0; i < length; i++) {
+            BigInteger encryptedMessage = encryptor.encrypt(paddedMessages[i], exponent, publicKey);
+            if(i < length - 1) {
+                output += encryptedMessage.toString() + ", ";
+            } else {
+                output += encryptedMessage.toString() + "\n";
+            }
+        }
+        outputPanel.setStatusText(output);
+        
     }
 }
