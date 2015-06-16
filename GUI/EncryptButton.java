@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-6-2015 10:09pm
+//Last update: 6-16-2015 6:52pm
 package GUI;
 
 import Encryption.Encryptor;
@@ -189,7 +189,7 @@ public class EncryptButton extends JPanel implements ActionListener {
         Encryptor encryptor = new Encryptor();
         int exponent = keys.getKeyExponent();
         BigInteger publicKey = keys.getPublicKey();
-        String output = "Encrypted values:\n";
+        String output = "";
         for(int i = 0; i < length; i++) {
             BigInteger encryptedMessage = encryptor.encrypt(paddedMessages[i], exponent, publicKey);
             if(i < length - 1) {
