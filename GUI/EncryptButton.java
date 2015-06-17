@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-16-2015 6:52pm
+//Last update: 6-17-2015 1:03am
 package GUI;
 
 import Encryption.Encryptor;
@@ -9,11 +9,14 @@ import Util.EncodingManager;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -80,7 +83,7 @@ public class EncryptButton extends JPanel implements ActionListener {
         if(encryptionPanel.getPlaintextOption() == 1) {
             encryptGivenText(keys);
         } else if (encryptionPanel.getPlaintextOption() == 2) {
-            
+            encryptTextFile(keys);
         } else if (encryptionPanel.getPlaintextOption() == 3) {
             
         }
@@ -200,5 +203,64 @@ public class EncryptButton extends JPanel implements ActionListener {
         }
         outputPanel.setStatusText(output);
         
+    }
+    
+    private void encryptTextFile(KeyGroup keys) {
+        String filepath = getFilepath();
+        if(filepath == null) {
+            return;
+        }
+        Encryptor encryptor = new Encryptor();
+        EncodingManager pad = new EncodingManager();
+        int exponent = keys.getKeyExponent();
+        BigInteger publicKey = keys.getPublicKey();
+        String encryptedFile = getEncryptedFilename(filepath);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filepath));
+            FileWriter fileStream = new FileWriter(encryptedFile);
+            BufferedWriter writer = new BufferedWriter(fileStream);
+            StringBuilder sb = new StringBuilder();
+            String line = reader.readLine();
+            while(line != null) {
+                String[] separatedMessage = pad.separate(line, 32);
+                int length = separatedMessage.length;
+                BigInteger paddedMessage;
+                for(int i = 0; i < length; i++) {
+                    String hex = pad.textToHexASCII(separatedMessage[i]);
+                    paddedMessage = pad.hexToBigInteger(hex);
+                    BigInteger encryptedMessage = encryptor.encrypt(paddedMessage, exponent, publicKey);
+                    if(i < length - 1) {
+                        writer.write(encryptedMessage.toString() + ", ");
+                    } else {
+                        writer.write(encryptedMessage.toString());
+                        writer.newLine();
+                    }
+                }
+                line = reader.readLine();
+            }
+            writer.close();
+            outputPanel.setStatusText("An encrypted version of the linked text file has been created.\n" + encryptedFile);
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private String getFilepath() {
+        String fp = textFileBox.getValidFile();
+        if(fp == null) {
+            return null;
+        } else {
+            fp = doubleBackslashes(fp);
+            return fp;
+        }
+    }
+    
+    private String getEncryptedFilename(String filepath) {
+        String name = filepath.substring(0, filepath.length() - 4);
+        name = name + "_encrypted.txt";
+        return name;
     }
 }
