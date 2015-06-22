@@ -9,9 +9,13 @@ import Util.EncodingManager;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.logging.Level;
@@ -67,7 +71,7 @@ public class DecryptButton extends JPanel implements ActionListener {
         if(decryptionPanel.getTextOption() == 1) {
             decryptGivenText(keys);
         } else if (decryptionPanel.getTextOption() == 2) {
-            
+            decryptTextFile(keys);
         } else if (decryptionPanel.getTextOption() == 3) {
             
         }
@@ -146,5 +150,61 @@ public class DecryptButton extends JPanel implements ActionListener {
             values[i] = new BigInteger(stringValues[i]);
         }
         return values;
+    }
+    
+    private void decryptTextFile(KeyGroup keys) {
+        String filepath = getFilepath();
+        if(filepath == null) {
+            return;
+        }
+        Encryptor encryptor = new Encryptor();
+        EncodingManager pad = new EncodingManager();
+        String decryptedFile = getDecryptedFilename(filepath);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filepath));
+            FileWriter fileStream = new FileWriter(decryptedFile);
+            BufferedWriter writer = new BufferedWriter(fileStream);
+            StringBuilder sb = new StringBuilder();
+            String line = reader.readLine();
+            //
+            while(line != null) {
+                BigInteger[] cipherTextSequence = parseValues(line);
+                int length = cipherTextSequence.length;
+                String[] decryptedMessages = new String[length];
+                for(int i = 0; i < length; i++) {
+                    BigInteger mValue = encryptor.decrypt(cipherTextSequence[i], keys.getPrivateKey(), keys.getPublicKey());
+                    String dHex = pad.bigIntegerToHex(mValue);
+                    String decryptedText = pad.hexToTextASCII(dHex);
+                    decryptedMessages[i] = decryptedText;
+                }
+                String decryptedText = pad.joinStrings(decryptedMessages);
+                writer.write(decryptedText);
+                writer.newLine();
+                line = reader.readLine();
+            }
+            writer.close();
+            System.out.println("An decrypted version of the given file has been created.");
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private String getFilepath() {
+        String fp = textFileBox.getValidFile();
+        if(fp == null) {
+            return null;
+        } else {
+            fp = doubleBackslashes(fp);
+            return fp;
+        }
+    }
+    
+    private String getDecryptedFilename(String filepath) {
+        String name = filepath.substring(0, filepath.length() - 4);
+        name = name + "_decrypted.txt";
+        return name;
     }
 }
