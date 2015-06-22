@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-17-2015 1:03am
+//Last update: 6-22-2015 1:31am
 package GUI;
 
 import Encryption.Encryptor;
@@ -39,6 +39,8 @@ public class EncryptButton extends JPanel implements ActionListener {
     private FileBox certificateFileBox;
     
     private OutputPanel outputPanel;
+    
+    private int SEGMENT_LENGTH = 32;
     
     public EncryptButton(EncryptionPanel ep, StringBox sb, FileBox tfb, FileBox ofb, KeyLengthBox klb, NameBox nb, FilepathBox fpb, FileBox cfb, OutputPanel op) {
         encryptionPanel = ep;
@@ -85,7 +87,7 @@ public class EncryptButton extends JPanel implements ActionListener {
         } else if (encryptionPanel.getPlaintextOption() == 2) {
             encryptTextFile(keys);
         } else if (encryptionPanel.getPlaintextOption() == 3) {
-            
+            encryptBinaryFile(keys);
         }
     }
     
@@ -206,7 +208,7 @@ public class EncryptButton extends JPanel implements ActionListener {
     }
     
     private void encryptTextFile(KeyGroup keys) {
-        String filepath = getFilepath();
+        String filepath = getFilepath(textFileBox);
         if(filepath == null) {
             return;
         }
@@ -214,7 +216,7 @@ public class EncryptButton extends JPanel implements ActionListener {
         EncodingManager pad = new EncodingManager();
         int exponent = keys.getKeyExponent();
         BigInteger publicKey = keys.getPublicKey();
-        String encryptedFile = getEncryptedFilename(filepath);
+        String encryptedFile = getEncryptedFilename(filepath, ".txt");
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filepath));
             FileWriter fileStream = new FileWriter(encryptedFile);
@@ -239,7 +241,6 @@ public class EncryptButton extends JPanel implements ActionListener {
                 line = reader.readLine();
             }
             writer.close();
-            outputPanel.setStatusText("An encrypted version of the linked text file has been created.\n" + encryptedFile);
             
         } catch (FileNotFoundException ex) {
             Logger.getLogger(TUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -248,8 +249,8 @@ public class EncryptButton extends JPanel implements ActionListener {
         }
     }
     
-    private String getFilepath() {
-        String fp = textFileBox.getValidFile();
+    private String getFilepath(FileBox source) {
+        String fp = source.getValidFile();
         if(fp == null) {
             return null;
         } else {
@@ -258,9 +259,74 @@ public class EncryptButton extends JPanel implements ActionListener {
         }
     }
     
-    private String getEncryptedFilename(String filepath) {
-        String name = filepath.substring(0, filepath.length() - 4);
-        name = name + "_encrypted.txt";
+    private String getEncryptedFilename(String filepath, String extension) {
+        String name = filepath.substring(0, filepath.length() - extension.length());
+        name = name + "_encrypted" + extension;
         return name;
+    }
+    
+    private void encryptBinaryFile(KeyGroup keys) {
+        String filepath = getFilepath(otherFileBox);
+        if(filepath == null) {
+            return;
+        }
+        Encryptor encryptor = new Encryptor();
+        EncodingManager pad = new EncodingManager();
+        int exponent = keys.getKeyExponent();
+        BigInteger publicKey = keys.getPublicKey();
+        String extension = getFileExtension(filepath);
+        String encryptedFile = getEncryptedFilename(filepath, extension);
+        try {
+            DataInputStream is;
+            is = new DataInputStream(new FileInputStream(filepath));
+            //Data is read in 32 byte segments
+            byte[] currentSegment;
+            do {
+                currentSegment = readNextSegment(is, SEGMENT_LENGTH);
+                //loop. read section, encrypt, write
+                
+            } while (currentSegment.length == 32);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(EncryptButton.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private String getFileExtension(String filepath) {
+        String extension = "";
+        int i = filepath.lastIndexOf('.');
+        if (i >= 0) {
+            extension = filepath.substring(i);
+        }
+        return extension;
+    }
+    
+    private byte[] readNextSegment(DataInputStream stream, int segmentLength) {
+        byte[] segment = new byte[32];
+        int endOfFileIndex = -1;
+        for(int i = 0; i < segmentLength; i++) {
+            try {
+                segment[i] = stream.readByte();
+            } catch (IOException ex) {
+                endOfFileIndex = i;
+                break;
+            }
+        }
+        
+        if(endOfFileIndex > -1) {
+            if(endOfFileIndex == 0) {
+                return null;
+            }
+            segment = new byte[endOfFileIndex+1];
+            for(int i = 0; i < endOfFileIndex + 1; i++) {
+                try {
+                    segment[i] = stream.readByte();
+                } catch (IOException ex) {
+                    //if this method is correct, this should not happen
+                }
+            }
+            return segment;
+        }
+        
+        return segment;
     }
 }

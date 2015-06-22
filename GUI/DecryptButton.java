@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-16-2015 6:52pm
+//Last update: 6-22-2015 1:31am
 package GUI;
 
 import Encryption.Encryptor;
@@ -153,13 +153,13 @@ public class DecryptButton extends JPanel implements ActionListener {
     }
     
     private void decryptTextFile(KeyGroup keys) {
-        String filepath = getFilepath();
+        String filepath = getFilepath(textFileBox);
         if(filepath == null) {
             return;
         }
         Encryptor encryptor = new Encryptor();
         EncodingManager pad = new EncodingManager();
-        String decryptedFile = getDecryptedFilename(filepath);
+        String decryptedFile = getDecryptedFilename(filepath, ".txt");
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filepath));
             FileWriter fileStream = new FileWriter(decryptedFile);
@@ -192,8 +192,8 @@ public class DecryptButton extends JPanel implements ActionListener {
         }
     }
     
-    private String getFilepath() {
-        String fp = textFileBox.getValidFile();
+    private String getFilepath(FileBox source) {
+        String fp = source.getValidFile();
         if(fp == null) {
             return null;
         } else {
@@ -202,9 +202,9 @@ public class DecryptButton extends JPanel implements ActionListener {
         }
     }
     
-    private String getDecryptedFilename(String filepath) {
-        String name = filepath.substring(0, filepath.length() - 4);
-        name = name + "_decrypted.txt";
+    private String getDecryptedFilename(String filepath, String extension) {
+        String name = filepath.substring(0, filepath.length() - extension.length());
+        name = name + "_decrypted" + extension;
         return name;
     }
 }
