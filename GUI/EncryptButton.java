@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-22-2015 1:31am
+//Last update: 6-24-2015 4:52pm
 package GUI;
 
 import Encryption.Encryptor;
@@ -279,14 +279,20 @@ public class EncryptButton extends JPanel implements ActionListener {
         try {
             DataInputStream is;
             is = new DataInputStream(new FileInputStream(filepath));
+            DataOutputStream os = new DataOutputStream(new FileOutputStream(encryptedFile));
             //Data is read in 32 byte segments
             byte[] currentSegment;
             do {
                 currentSegment = readNextSegment(is, SEGMENT_LENGTH);
                 //loop. read section, encrypt, write
-                
+                BigInteger segmentValue = new BigInteger(currentSegment);
+                BigInteger encryptedValue = encryptor.encrypt(segmentValue, exponent, publicKey);
+                byte[] encryptedSegment = encryptedValue.toByteArray();
+                os.write(encryptedSegment);
             } while (currentSegment.length == 32);
         } catch (FileNotFoundException ex) {
+            Logger.getLogger(EncryptButton.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(EncryptButton.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

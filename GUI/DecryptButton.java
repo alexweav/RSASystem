@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-22-2015 1:31am
+//Last update: 6-24-2015 4:52pm
 package GUI;
 
 import Encryption.Encryptor;
@@ -73,7 +73,7 @@ public class DecryptButton extends JPanel implements ActionListener {
         } else if (decryptionPanel.getTextOption() == 2) {
             decryptTextFile(keys);
         } else if (decryptionPanel.getTextOption() == 3) {
-            
+            decryptBinaryFile(keys);
         }
     }
     
@@ -206,5 +206,16 @@ public class DecryptButton extends JPanel implements ActionListener {
         String name = filepath.substring(0, filepath.length() - extension.length());
         name = name + "_decrypted" + extension;
         return name;
+    }
+    
+    private void decryptBinaryFile(KeyGroup keys) {
+        String filepath = getFilepath(otherFileBox);
+        if(filepath == null) {
+            return;
+        }
+        Encryptor encryptor = new Encryptor();
+        EncodingManager pad = new EncodingManager();
+        BigInteger privateKey = keys.getPrivateKey();
+        BigInteger publicKey = keys.getPublicKey();
     }
 }
