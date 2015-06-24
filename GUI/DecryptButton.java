@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-24-2015 4:52pm
+//Last update: 6-24-2015 5:01pm
 package GUI;
 
 import Encryption.Encryptor;
@@ -12,8 +12,10 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,6 +36,8 @@ public class DecryptButton extends JPanel implements ActionListener {
     private OutputPanel outputPanel;
     
     private boolean isActive;
+    
+    private int SEGMENT_LENGTH = 32;
     
     public DecryptButton(DecryptionPanel dp, StringBox sb, FileBox tfb, FileBox ofb, FileBox cfb, OutputPanel op) {
         decryptionPanel = dp;
@@ -217,5 +221,67 @@ public class DecryptButton extends JPanel implements ActionListener {
         EncodingManager pad = new EncodingManager();
         BigInteger privateKey = keys.getPrivateKey();
         BigInteger publicKey = keys.getPublicKey();
+        String extension = getFileExtension(filepath);
+        String decryptedFile = getDecryptedFilename(filepath, extension);
+        
+        DataInputStream is;
+        try {
+            is = new DataInputStream(new FileInputStream(filepath));
+            DataOutputStream os = new DataOutputStream(new FileOutputStream(decryptedFile));
+            //Data is read in 32 byte segments
+            byte[] currentSegment;
+            do {
+                currentSegment = readNextSegment(is, SEGMENT_LENGTH);
+                //loop. read section, decrypt, write
+                BigInteger segmentValue = new BigInteger(currentSegment);
+                BigInteger decryptedValue = encryptor.decrypt(segmentValue, privateKey, publicKey);
+                byte[] decryptedSegment = decryptedValue.toByteArray();
+                os.write(decryptedSegment);
+            } while (currentSegment.length == 32);
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(DecryptButton.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(DecryptButton.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private String getFileExtension(String filepath) {
+        String extension = "";
+        int i = filepath.lastIndexOf('.');
+        if (i >= 0) {
+            extension = filepath.substring(i);
+        }
+        return extension;
+    }
+    
+    private byte[] readNextSegment(DataInputStream stream, int segmentLength) {
+        byte[] segment = new byte[32];
+        int endOfFileIndex = -1;
+        for(int i = 0; i < segmentLength; i++) {
+            try {
+                segment[i] = stream.readByte();
+            } catch (IOException ex) {
+                endOfFileIndex = i;
+                break;
+            }
+        }
+        
+        if(endOfFileIndex > -1) {
+            if(endOfFileIndex == 0) {
+                return null;
+            }
+            segment = new byte[endOfFileIndex+1];
+            for(int i = 0; i < endOfFileIndex + 1; i++) {
+                try {
+                    segment[i] = stream.readByte();
+                } catch (IOException ex) {
+                    //if this method is correct, this should not happen
+                }
+            }
+            return segment;
+        }
+        
+        return segment;
     }
 }
