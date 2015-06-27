@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-24-2015 5:01pm
+//Last update: 6-26-2015 8:47pm
 package GUI;
 
 import Encryption.Encryptor;
@@ -178,7 +178,12 @@ public class DecryptButton extends JPanel implements ActionListener {
                 for(int i = 0; i < length; i++) {
                     BigInteger mValue = encryptor.decrypt(cipherTextSequence[i], keys.getPrivateKey(), keys.getPublicKey());
                     String dHex = pad.bigIntegerToHex(mValue);
-                    String decryptedText = pad.hexToTextASCII(dHex);
+                    String decryptedText;
+                    try {
+                        decryptedText = pad.hexToTextASCII(dHex);
+                    } catch(StringIndexOutOfBoundsException e) {
+                        decryptedText = "\n\n";
+                    }
                     decryptedMessages[i] = decryptedText;
                 }
                 String decryptedText = pad.joinStrings(decryptedMessages);
@@ -228,16 +233,28 @@ public class DecryptButton extends JPanel implements ActionListener {
         try {
             is = new DataInputStream(new FileInputStream(filepath));
             DataOutputStream os = new DataOutputStream(new FileOutputStream(decryptedFile));
-            //Data is read in 32 byte segments
+            //Data is read in 64 byte segments
             byte[] currentSegment;
             do {
-                currentSegment = readNextSegment(is, SEGMENT_LENGTH);
+                int currentSegmentLength;
+                try {
+                    currentSegmentLength = is.readByte();
+                } catch (IOException e) {
+                    break;
+                }
+                System.out.println("next length: " + currentSegmentLength);
+                currentSegment = readNextSegment(is, currentSegmentLength);
+                if(currentSegment == null) {
+                    break;
+                }
                 //loop. read section, decrypt, write
+                System.out.println("Incoming segment length: " + currentSegment.length);
                 BigInteger segmentValue = new BigInteger(currentSegment);
                 BigInteger decryptedValue = encryptor.decrypt(segmentValue, privateKey, publicKey);
                 byte[] decryptedSegment = decryptedValue.toByteArray();
+                System.out.println("Outgoing segment length: " + decryptedSegment.length);
                 os.write(decryptedSegment);
-            } while (currentSegment.length == 32);
+            } while (true);
             
         } catch (FileNotFoundException ex) {
             Logger.getLogger(DecryptButton.class.getName()).log(Level.SEVERE, null, ex);
@@ -256,32 +273,30 @@ public class DecryptButton extends JPanel implements ActionListener {
     }
     
     private byte[] readNextSegment(DataInputStream stream, int segmentLength) {
-        byte[] segment = new byte[32];
+        byte[] segment = new byte[segmentLength];
         int endOfFileIndex = -1;
         for(int i = 0; i < segmentLength; i++) {
             try {
                 segment[i] = stream.readByte();
             } catch (IOException ex) {
                 endOfFileIndex = i;
+                System.out.println(i);
                 break;
             }
         }
         
-        if(endOfFileIndex > -1) {
+        /*if(endOfFileIndex > -1) {
             if(endOfFileIndex == 0) {
                 return null;
             }
-            segment = new byte[endOfFileIndex+1];
-            for(int i = 0; i < endOfFileIndex + 1; i++) {
-                try {
-                    segment[i] = stream.readByte();
-                } catch (IOException ex) {
-                    //if this method is correct, this should not happen
-                }
+            byte[] newSegment = new byte[endOfFileIndex+1];
+            System.out.println(endOfFileIndex+1);
+            for(int i = 0; i < endOfFileIndex; i++) {
+                newSegment[i] = segment[i];
             }
-            return segment;
+            return newSegment;
         }
-        
+        System.out.println("Complete segment.");*/
         return segment;
     }
 }

@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-24-2015 4:52pm
+//Last update: 6-26-2015 8:47pm
 package GUI;
 
 import Encryption.Encryptor;
@@ -40,7 +40,7 @@ public class EncryptButton extends JPanel implements ActionListener {
     
     private OutputPanel outputPanel;
     
-    private int SEGMENT_LENGTH = 32;
+    private int SEGMENT_LENGTH = 8;
     
     public EncryptButton(EncryptionPanel ep, StringBox sb, FileBox tfb, FileBox ofb, KeyLengthBox klb, NameBox nb, FilepathBox fpb, FileBox cfb, OutputPanel op) {
         encryptionPanel = ep;
@@ -229,7 +229,11 @@ public class EncryptButton extends JPanel implements ActionListener {
                 BigInteger paddedMessage;
                 for(int i = 0; i < length; i++) {
                     String hex = pad.textToHexASCII(separatedMessage[i]);
-                    paddedMessage = pad.hexToBigInteger(hex);
+                    try {
+                        paddedMessage = pad.hexToBigInteger(hex);
+                    } catch (NumberFormatException e) { //This will occur if the reader has come across a blank line, which is not the end of the file.
+                        continue;
+                    }
                     BigInteger encryptedMessage = encryptor.encrypt(paddedMessage, exponent, publicKey);
                     if(i < length - 1) {
                         writer.write(encryptedMessage.toString() + ", ");
@@ -284,12 +288,19 @@ public class EncryptButton extends JPanel implements ActionListener {
             byte[] currentSegment;
             do {
                 currentSegment = readNextSegment(is, SEGMENT_LENGTH);
+                if(currentSegment == null) {
+                    break;
+                }
                 //loop. read section, encrypt, write
+                System.out.println("Incoming segment length: " + currentSegment.length);
                 BigInteger segmentValue = new BigInteger(currentSegment);
                 BigInteger encryptedValue = encryptor.encrypt(segmentValue, exponent, publicKey);
                 byte[] encryptedSegment = encryptedValue.toByteArray();
+                int outgoingLength = encryptedSegment.length;
+                System.out.println("Outgoing segment length: " + encryptedSegment.length);
+                os.write(outgoingLength);
                 os.write(encryptedSegment);
-            } while (currentSegment.length == 32);
+            } while (currentSegment.length == SEGMENT_LENGTH);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(EncryptButton.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -307,13 +318,14 @@ public class EncryptButton extends JPanel implements ActionListener {
     }
     
     private byte[] readNextSegment(DataInputStream stream, int segmentLength) {
-        byte[] segment = new byte[32];
+        byte[] segment = new byte[segmentLength];
         int endOfFileIndex = -1;
         for(int i = 0; i < segmentLength; i++) {
             try {
                 segment[i] = stream.readByte();
             } catch (IOException ex) {
                 endOfFileIndex = i;
+                System.out.println(i);
                 break;
             }
         }
@@ -322,17 +334,14 @@ public class EncryptButton extends JPanel implements ActionListener {
             if(endOfFileIndex == 0) {
                 return null;
             }
-            segment = new byte[endOfFileIndex+1];
-            for(int i = 0; i < endOfFileIndex + 1; i++) {
-                try {
-                    segment[i] = stream.readByte();
-                } catch (IOException ex) {
-                    //if this method is correct, this should not happen
-                }
+            byte[] newSegment = new byte[endOfFileIndex+1];
+            System.out.println(endOfFileIndex+1);
+            for(int i = 0; i < endOfFileIndex; i++) {
+                newSegment[i] = segment[i];
             }
-            return segment;
+            return newSegment;
         }
-        
+        System.out.println("Complete segment.");
         return segment;
     }
 }
