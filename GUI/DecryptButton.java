@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-26-2015 8:47pm
+//Last update: 6-30-2015 1:38pm
 package GUI;
 
 import Encryption.Encryptor;
@@ -20,6 +20,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -100,6 +101,9 @@ public class DecryptButton extends JPanel implements ActionListener {
         outputPanel.setStatusText(decryptedText);
     }
     
+    //Replaces every instance of the character "\" in a string with "\\"
+    //Used because Java filepaths require backslashes to be doubled due to character escaping
+    //This method is the wonderful product of regular expressions and Java's escape character
     private String doubleBackslashes(String string) {
         return string.replaceAll("\\\\", "\\\\\\\\");
     }
@@ -201,6 +205,8 @@ public class DecryptButton extends JPanel implements ActionListener {
         }
     }
     
+    //Gets a valid filepath from the corresponding field in the GUI
+    //Returns null if the user-given filepath is invalid (i.e. it does not exist, it contains unrecognized characaters, or the field is empty)
     private String getFilepath(FileBox source) {
         String fp = source.getValidFile();
         if(fp == null) {
@@ -211,6 +217,10 @@ public class DecryptButton extends JPanel implements ActionListener {
         }
     }
     
+    //Creates the filename of a decrypted file
+    //If the encrypted file is titled "filename.extension"
+    //Then the decrypted file is titles "filename_decrypted.extension"
+    //Preserves any directory information before the filename
     private String getDecryptedFilename(String filepath, String extension) {
         String name = filepath.substring(0, filepath.length() - extension.length());
         name = name + "_decrypted" + extension;
@@ -219,6 +229,7 @@ public class DecryptButton extends JPanel implements ActionListener {
     
     private void decryptBinaryFile(KeyGroup keys) {
         String filepath = getFilepath(otherFileBox);
+        //If invalid filepath, stop process immediately
         if(filepath == null) {
             return;
         }
@@ -233,25 +244,41 @@ public class DecryptButton extends JPanel implements ActionListener {
         try {
             is = new DataInputStream(new FileInputStream(filepath));
             DataOutputStream os = new DataOutputStream(new FileOutputStream(decryptedFile));
-            //Data is read in 64 byte segments
             byte[] currentSegment;
             do {
+                //Due to natural properties of RSA encryption, if the encryption key length is higher than 1024 bit, then the length of encrypted numbers will be greater than 128 bits.
+                //If this occurs, the segment length will be negative because Java does not play well with unsigned primitives
+                //This is (slightly broken) code that will ensure that segment lengths of up to 128 bits will be properly interpreted
                 int currentSegmentLength;
                 try {
-                    currentSegmentLength = is.readByte();
+                    currentSegmentLength = (int)is.readByte();
+                    if(currentSegmentLength < 1) {
+                        currentSegmentLength = -currentSegmentLength;
+                    }
+                //If no segment length marker exists, then the file has ended and we may stop decrypting.
                 } catch (IOException e) {
                     break;
                 }
                 System.out.println("next length: " + currentSegmentLength);
+                //Given the length of the current segment of binary code,
+                //the correct amount of code is read and saved into a byte array (in big-endian format)
                 currentSegment = readNextSegment(is, currentSegmentLength);
                 if(currentSegment == null) {
                     break;
                 }
                 //loop. read section, decrypt, write
                 System.out.println("Incoming segment length: " + currentSegment.length);
-                BigInteger segmentValue = new BigInteger(currentSegment);
+                //Maps the binary segment into its corresponding unsigned BigInteger
+                //Decrypts the BigInteger
+                //Writes the BigInteger to the decrypted file
+                //Loop until all segments have been decrypted
+                BigInteger segmentValue = new BigInteger(1, currentSegment);
                 BigInteger decryptedValue = encryptor.decrypt(segmentValue, privateKey, publicKey);
                 byte[] decryptedSegment = decryptedValue.toByteArray();
+                if(decryptedSegment.length == 9 && decryptedSegment[0] == 0x00) {
+                    decryptedSegment = Arrays.copyOfRange(decryptedSegment, 1, 9);
+                }
+                
                 System.out.println("Outgoing segment length: " + decryptedSegment.length);
                 os.write(decryptedSegment);
             } while (true);
@@ -263,6 +290,8 @@ public class DecryptButton extends JPanel implements ActionListener {
         }
     }
     
+    //Takes a filepath in the form of a string
+    //Returns the file extension of the referenced file
     private String getFileExtension(String filepath) {
         String extension = "";
         int i = filepath.lastIndexOf('.');
@@ -272,6 +301,9 @@ public class DecryptButton extends JPanel implements ActionListener {
         return extension;
     }
     
+    //Takes an binary input stream and an integer segment length
+    //Reads segmentLength number of bytes from the stream
+    //Returns the collected data from the stream in the form of a big-endian byte array
     private byte[] readNextSegment(DataInputStream stream, int segmentLength) {
         byte[] segment = new byte[segmentLength];
         int endOfFileIndex = -1;

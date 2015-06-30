@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-26-2015 8:47pm
+//Last update: 6-30-2015 1:38pm
 package GUI;
 
 import Encryption.Encryptor;
@@ -293,7 +293,7 @@ public class EncryptButton extends JPanel implements ActionListener {
                 }
                 //loop. read section, encrypt, write
                 System.out.println("Incoming segment length: " + currentSegment.length);
-                BigInteger segmentValue = new BigInteger(currentSegment);
+                BigInteger segmentValue = new BigInteger(1, currentSegment);
                 BigInteger encryptedValue = encryptor.encrypt(segmentValue, exponent, publicKey);
                 byte[] encryptedSegment = encryptedValue.toByteArray();
                 int outgoingLength = encryptedSegment.length;
