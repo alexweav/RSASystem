@@ -277,14 +277,14 @@ public class DecryptButton extends JPanel implements ActionListener {
                 BigInteger decryptedValue = encryptor.decrypt(segmentValue, privateKey, publicKey);
                 byte[] decryptedSegment = decryptedValue.toByteArray();
                 System.out.println("Before trimming: " + decryptedSegment.length);
-                if(decryptedSegment.length == 32 + 1 && decryptedSegment[0] == 0x00) {
-                    decryptedSegment = Arrays.copyOfRange(decryptedSegment, 1, 33);
+                if(decryptedSegment.length == SEGMENT_LENGTH + 1 && decryptedSegment[0] == 0x00) {
+                    decryptedSegment = Arrays.copyOfRange(decryptedSegment, 1, SEGMENT_LENGTH + 1);
                 }
-                if(decryptedSegment.length < 32 && decryptedSegment[decryptedSegment.length-1] == 0x00) {
+                if(decryptedSegment.length < SEGMENT_LENGTH && decryptedSegment[decryptedSegment.length-1] == 0x00) {
                     decryptedSegment = Arrays.copyOfRange(decryptedSegment, 0, decryptedSegment.length - 1);
                 }
-                if(decryptedSegment.length < 32 && is.available() > 0) {
-                    int numZeroBytes = 32 - decryptedSegment.length;
+                if(decryptedSegment.length < SEGMENT_LENGTH && is.available() > 0) {
+                    int numZeroBytes = SEGMENT_LENGTH - decryptedSegment.length;
                     System.out.println("Adding " + numZeroBytes + " bytes to left of segment.");
                     decryptedSegment = addZeroBytes(decryptedSegment, numZeroBytes);
                 }
