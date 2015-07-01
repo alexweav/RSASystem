@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-30-2015 1:38pm
+//Last update: 7-1-2015 5:22pm
 package GUI;
 
 import Encryption.Encryptor;
@@ -40,7 +40,7 @@ public class EncryptButton extends JPanel implements ActionListener {
     
     private OutputPanel outputPanel;
     
-    private int SEGMENT_LENGTH = 8;
+    private int SEGMENT_LENGTH = 32;
     
     public EncryptButton(EncryptionPanel ep, StringBox sb, FileBox tfb, FileBox ofb, KeyLengthBox klb, NameBox nb, FilepathBox fpb, FileBox cfb, OutputPanel op) {
         encryptionPanel = ep;

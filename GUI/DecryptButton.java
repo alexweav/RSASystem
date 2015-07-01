@@ -1,5 +1,5 @@
 //Alexander Weaver
-//Last update: 6-30-2015 1:38pm
+//Last update: 7-1-2015 5:22pm
 package GUI;
 
 import Encryption.Encryptor;
@@ -257,6 +257,7 @@ public class DecryptButton extends JPanel implements ActionListener {
                     }
                 //If no segment length marker exists, then the file has ended and we may stop decrypting.
                 } catch (IOException e) {
+                    
                     break;
                 }
                 System.out.println("next length: " + currentSegmentLength);
@@ -275,8 +276,17 @@ public class DecryptButton extends JPanel implements ActionListener {
                 BigInteger segmentValue = new BigInteger(1, currentSegment);
                 BigInteger decryptedValue = encryptor.decrypt(segmentValue, privateKey, publicKey);
                 byte[] decryptedSegment = decryptedValue.toByteArray();
-                if(decryptedSegment.length == 9 && decryptedSegment[0] == 0x00) {
-                    decryptedSegment = Arrays.copyOfRange(decryptedSegment, 1, 9);
+                System.out.println("Before trimming: " + decryptedSegment.length);
+                if(decryptedSegment.length == 32 + 1 && decryptedSegment[0] == 0x00) {
+                    decryptedSegment = Arrays.copyOfRange(decryptedSegment, 1, 33);
+                }
+                if(decryptedSegment.length < 32 && decryptedSegment[decryptedSegment.length-1] == 0x00) {
+                    decryptedSegment = Arrays.copyOfRange(decryptedSegment, 0, decryptedSegment.length - 1);
+                }
+                if(decryptedSegment.length < 32 && is.available() > 0) {
+                    int numZeroBytes = 32 - decryptedSegment.length;
+                    System.out.println("Adding " + numZeroBytes + " bytes to left of segment.");
+                    decryptedSegment = addZeroBytes(decryptedSegment, numZeroBytes);
                 }
                 
                 System.out.println("Outgoing segment length: " + decryptedSegment.length);
@@ -330,5 +340,17 @@ public class DecryptButton extends JPanel implements ActionListener {
         }
         System.out.println("Complete segment.");*/
         return segment;
+    }
+    
+    private byte[] addZeroBytes(byte[] array, int numZeros) {
+        byte[] output = new byte[array.length + numZeros];
+        for(int i = 0; i < output.length; i++) {
+            if(i < numZeros) {
+                output[i] = 0x00;
+            } else {
+                output[i] = array[i - numZeros];
+            }
+        }
+        return output;
     }
 }
